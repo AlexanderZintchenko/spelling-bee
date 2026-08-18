@@ -46,7 +46,7 @@ function App() {
     if (voice != null) {
       utterance.voice = voice ?? null;
     }
-      
+
     window.speechSynthesis.speak(utterance);
   }
 
@@ -74,8 +74,12 @@ function App() {
             <p></p>
           </div>
           <div className="flex container row">
-            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>info</button>
-            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>settings</button>
+            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
+              info
+            </button>
+            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
+              settings
+            </button>
           </div>
         </header>
         <div className="hero flex column">

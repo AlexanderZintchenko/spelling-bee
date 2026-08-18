@@ -1,6 +1,6 @@
 * {
-    box-sizing: border-box;
-    outline: 1px solid transparent;
+  box-sizing: border-box;
+  outline: 1px solid transparent;
 }
 
 :root {
@@ -38,25 +38,25 @@
 
   &:hover {
     &:hover {
-    cursor: pointer;
-    background-color: var(--bg-color);
-  }
+      cursor: pointer;
+      background-color: var(--bg-color);
+    }
   }
 }
 
 .flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .column {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .row {
-    flex-direction: row;
-    justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .less-bottom-margin {
@@ -64,8 +64,8 @@
 }
 
 .container > * {
-    padding: 1rem;
-    margin: 0.2rem;
+  padding: 1rem;
+  margin: 0.2rem;
 }
 
 header {
@@ -73,7 +73,7 @@ header {
 }
 
 .bg-beige {
-    background-color: beige;
+  background-color: beige;
 }
 
 h1 {
@@ -88,7 +88,7 @@ h1 {
   background: var(--accent-bg);
   border: 2px solid transparent;
   transition: border-color 0.3s;
-  
+
   font-weight: normal;
 
   &:hover {
@@ -105,7 +105,7 @@ h1 {
   color: lightgray;
   filter: blur(6px);
   padding: var(--padding-default);
-  
+
   &:hover {
     filter: blur(0px);
   }
@@ -116,7 +116,6 @@ h1 {
   color: rgb(129, 214, 2);
   padding: var(--padding-default);
 }
-
 
 .textInput {
   font-size: var(--font-size-default);
