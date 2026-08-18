@@ -11,4 +11,5 @@ export default defineConfig({
   server: {
     allowedHosts: ['spelling-bee-prototype.tunnelmole.net'],
   },
+  base: "/spelling-bee/",
 })
