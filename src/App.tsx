@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import animeImg from "./assets/anime_peace.png";
 import "./App.css";
 import english5k from "./static/english_5k.json";
