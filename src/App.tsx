@@ -1,41 +1,52 @@
 import { useState, useRef, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
 import animeImg from "./assets/anime_peace.png";
 import "./App.css";
 import english5k from "./static/english_5k.json";
 
 function App() {
   const [randomWord, setRandomWord] = useState("start");
-  const words = ["random1", "random2"];
   const [textInput, setTextInput] = useState("");
   let wordclass = "random-word-default";
   const inputRef = useRef<HTMLInputElement>(null);
   const [counter, setCounter] = useState(0);
+  const voices = window.speechSynthesis.getVoices();
+  console.log(voices);
+  let voice = voices.find((voice) => voice.name === "Microsoft David - English (United States)");
+
+  if (voice == null) {
+    voice = voices.find((voice) => voice.name === "Microsoft George - English (United Kingdom)");
+  }
+
+  if (voice == null) {
+    voice = voices.find((voice) => voice.name === "Microsoft Mark - English (United States)");
+  }
+
+  if (voice == null) {
+    voice = voices[0];
+  }
+
+  /*const index = 6;
+  if (voices.length > index) {
+    voice = voices[index];
+  }*/
 
   function getRandomWord() {
     const randomIndex = Math.floor(Math.random() * english5k.words.length);
     return english5k.words[randomIndex];
   }
 
-  const voices = window.speechSynthesis.getVoices();
-  console.log(voices);
-
-  const voice = voices.find((voice) => voice.name === "Microsoft George - English (United Kingdom)");
-
   function wordToSpeech(word: string) {
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(word);
 
+    const sentence = "spell " + word;
+    const utterance = new SpeechSynthesisUtterance(sentence);
+    utterance.volume = 1;
+    utterance.pitch = 0.9;
+    utterance.rate = 0.8;
     if (voice != null) {
       utterance.voice = voice ?? null;
     }
-
-    if (voices.length > 6) {
-      utterance.voice = voices[6];
-    }
-
+      
     window.speechSynthesis.speak(utterance);
   }
 
