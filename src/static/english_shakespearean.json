@@ -1,6 +1,10 @@
 {
   "name": "english_shakespearean",
   "noLazyMode": true,
+  "orderedByFrequency": false,
+  "comment": "",
+  "bcp47": "",
+  "additionalAccents": [],
   "words": [
     "hark",
     "thou",

@@ -1,12 +1,31 @@
 import { useState, useRef, useEffect } from "react";
+import type { Dictionary } from "./dictionary.types";
 //import logo from "./assets/anime_peace.png";
 import penguin from "./assets/penguin.png";
 import astolfo from "./assets/louie.png";
 import "./App.css";
 import english5k from "./static/english_5k.json";
+//import english10k from "./static/english_10k.json";
+//import english25k from "./static/english_25k.json";
+//import englishShakespearean from "./static/english_shakespearean.json";
+//import german10k from "./static/german_10k.json"
 
 const preload = new Image();
 preload.src = astolfo;
+
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [value, setValue] = useState<T>(() => {
+    const storedValue = localStorage.getItem(key);
+
+    return storedValue !== null ? JSON.parse(storedValue) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue] as const;
+}
 
 function initializeVoices(voices: SpeechSynthesisVoice[]) {
   console.log(voices);
@@ -32,9 +51,7 @@ function initializeVoices(voices: SpeechSynthesisVoice[]) {
 }
 
 function App() {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(
-    speechSynthesis.getVoices()
-  );
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(speechSynthesis.getVoices());
 
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
 
@@ -58,29 +75,40 @@ function App() {
   const [textInput, setTextInput] = useState("");
   let wordclass = "random-word-default";
   const inputRef = useRef<HTMLInputElement>(null);
-  const [streakCounter, setstreakCounter] = useState(0);
-  const [correctCounter, setcorrectCounter] = useState(0);
-  const [falseCounter, setfalseCounter] = useState(0);
+  const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
+  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
+  const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
+  const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
   const [lastFalseWord, setlastFalseWord] = useState("-");
   const matching = randomWord.startsWith(textInput);
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
-  
+
   const [volume, setVolume] = useState(1);
   const [pitch, setPitch] = useState(1.05);
   const [rate, setRate] = useState(0.8);
+  const [dictionary, setDictionary] = useState<Dictionary>(english5k);
+  const [dictionaryId, setDictionaryId] = useState("0");
 
   console.log(voice?.name);
 
   function getRandomWord() {
-    const randomIndex = Math.floor(Math.random() * english5k.words.length);
-    return english5k.words[randomIndex];
+    const randomIndex = Math.floor(Math.random() * dictionary.words.length);
+    return dictionary.words[randomIndex];
   }
 
   function wordToSpeech(word: string) {
     window.speechSynthesis.cancel();
 
-    const sentence = "spell " + word;
+    // eslint-disable-next-line no-useless-assignment
+    let sentence = "";
+
+    if (dictionaryId == "4") {
+      sentence = "Buchstabiere " + word + "!";
+    } else {
+      sentence = "Spell " + word + "!";
+    }
+
     const utterance = new SpeechSynthesisUtterance(sentence);
     utterance.volume = volume;
     utterance.pitch = pitch;
@@ -94,12 +122,19 @@ function App() {
 
   function generateRandomWord() {
     if (wordclass === "random-word-correct") {
-      setstreakCounter(streakCounter + 1);
-      setcorrectCounter(correctCounter + 1);
+      const newStreak = streakCounter + 1;
+
+      setStreakCounter(newStreak);
+      setCorrectCounter((current) => current + 1);
+
+      if (newStreak > bestStreakCounter) {
+        setBestStreakCounter(newStreak);
+      }
     } else {
-      setstreakCounter(0);
+      setStreakCounter(0);
+
       if (textInput.length > 0) {
-        setfalseCounter(falseCounter + 1);
+        setFalseCounter((current) => current + 1);
         setlastFalseWord(randomWord);
       }
     }
@@ -169,6 +204,7 @@ function App() {
               🕪
             </button>
             <p className="streakCounter">streak: {streakCounter}</p>
+            <p className="streakCounter">best streak: {bestStreakCounter}</p>
             <p className="streakCounter">correct: {correctCounter}</p>
             <p className="streakCounter">false: {falseCounter}</p>
             <p>
@@ -224,7 +260,7 @@ function App() {
                 <input
                   type="range"
                   min="0"
-                  max="300"
+                  max="150"
                   value={rate * 100}
                   className="slider"
                   id="rate"
@@ -235,7 +271,9 @@ function App() {
                 </button>
               </div>
               <div className="settings-option">
+                <label htmlFor="voices">Voices:</label>
                 <select
+                  id="voices"
                   value={voice?.name ?? ""}
                   onChange={(event) => {
                     const selectedVoice = voices.find((v) => v.name === event.target.value);
@@ -253,7 +291,54 @@ function App() {
                 </select>
               </div>
               <div className="settings-option">
-                <label htmlFor="option1">Option X</label>
+                <label htmlFor="dictionaries">Dictionary:</label>
+                <select
+                  id="dictionaries"
+                  value={dictionaryId}
+                  onChange={async (event) => {
+                    setDictionaryId(event.target.value);
+                    switch (event.target.value) {
+                      case "0": {
+                        const english5k = await import("./static/english_5k.json");
+                        setDictionary(english5k.default);
+                        break;
+                      }
+
+                      case "1": {
+                        const english10k = await import("./static/english_10k.json");
+                        setDictionary(english10k.default);
+                        break;
+                      }
+
+                      case "2": {
+                        const english25k = await import("./static/english_25k.json");
+                        setDictionary(english25k.default);
+                        break;
+                      }
+
+                      case "3": {
+                        const englishShakespearean = await import("./static/english_shakespearean.json");
+                        setDictionary(englishShakespearean.default);
+                        break;
+                      }
+
+                      case "4": {
+                        const german10k = await import("./static/german_10k.json");
+                        setDictionary(german10k.default);
+                        break;
+                      }
+                    }
+                  }}
+                >
+                  <option value="0">English - 5k</option>
+                  <option value="1">English - 10k</option>
+                  <option value="2">English - 25k</option>
+                  <option value="3">English - Shakespearean</option>
+                  <option value="4">German - 10k</option>
+                </select>
+              </div>
+              <div className="settings-option">
+                <label htmlFor="option1">Sectret Option</label>
                 <input id="option1" type="checkbox" />
               </div>
             </div>
