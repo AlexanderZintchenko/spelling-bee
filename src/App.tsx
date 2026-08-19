@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
-//import animeImg from "./assets/anime_peace.png";
-//import animeImg from "./assets/penguin.png";
-import animeImg from "./assets/louie.png";
+//import logo from "./assets/anime_peace.png";
+import penguin from "./assets/penguin.png";
+import alfonso from "./assets/louie.png";
 import "./App.css";
 import english5k from "./static/english_5k.json";
 
@@ -35,6 +35,7 @@ function App() {
   const [lastFalseWord, setlastFalseWord] = useState("-");
   const voices = window.speechSynthesis.getVoices();
   const matching = randomWord.startsWith(textInput);
+  const [logo, setLogo] = useState(penguin) 
 
   const voice = initializeVoices(voices);
 
@@ -105,7 +106,7 @@ function App() {
         </header>
         <div className="flex column">
           <div className="hero flex column less-gap">
-            <img src={animeImg} id="logo" className="animeImg" alt="anime peace sign" />
+            <img src={logo} id="logo" className="logo" alt="anime peace sign" />
             <h1 className="">Spelling Bee Prototype</h1>
           </div>
           <div className="flex column container">
@@ -120,6 +121,10 @@ function App() {
               onChange={(event) => {
                 const value = event.target.value;
                 setTextInput(value);
+                const lowerCasedValue = value.toLowerCase()
+                if (lowerCasedValue === 'alfonso') {
+                  setLogo(alfonso);
+                }
               }}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
