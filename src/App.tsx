@@ -10,7 +10,11 @@ preload.src = astolfo;
 
 function initializeVoices(voices: SpeechSynthesisVoice[]) {
   console.log(voices);
-  let voice = voices.find((voice) => voice.name === "Microsoft David - English (United States)");
+  let voice = voices.find((voice) => voice.name === "Google UK English Male");
+
+  if (voice == null) {
+    voice = voices.find((voice) => voice.name === "Microsoft David - English (United Kingdom)");
+  }
 
   if (voice == null) {
     voice = voices.find((voice) => voice.name === "Microsoft George - English (United Kingdom)");
@@ -28,11 +32,18 @@ function initializeVoices(voices: SpeechSynthesisVoice[]) {
 }
 
 function App() {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(speechSynthesis.getVoices());
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(
+    speechSynthesis.getVoices()
+  );
+
+  const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
 
   useEffect(() => {
     const updateVoices = () => {
-      setVoices(speechSynthesis.getVoices());
+      const availableVoices = speechSynthesis.getVoices();
+
+      setVoices(availableVoices);
+      setVoice(initializeVoices(availableVoices));
     };
 
     updateVoices();
@@ -54,7 +65,7 @@ function App() {
   const matching = randomWord.startsWith(textInput);
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
-  const [voice, setVoice] = useState(initializeVoices(voices));
+  
   const [volume, setVolume] = useState(1);
   const [pitch, setPitch] = useState(1.05);
   const [rate, setRate] = useState(0.8);
@@ -149,7 +160,7 @@ function App() {
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   generateRandomWord();
-                } else if (event.key === "Alt") {
+                } else if (event.key === "Control") {
                   wordToSpeech(randomWord);
                 }
               }}
