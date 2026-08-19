@@ -122,7 +122,7 @@ function App() {
                 const value = event.target.value;
                 setTextInput(value);
                 const lowerCasedValue = value.toLowerCase()
-                if (lowerCasedValue === 'alfonso') {
+                if (lowerCasedValue === 'astolfo') {
                   setLogo(alfonso);
                 }
               }}
