@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 //import logo from "./assets/anime_peace.png";
 import penguin from "./assets/penguin.png";
-import alfonso from "./assets/louie.png";
+import astolfo from "./assets/louie.png";
 import "./App.css";
 import english5k from "./static/english_5k.json";
+
+const preload = new Image();
+preload.src = astolfo;
 
 function initializeVoices(voices: SpeechSynthesisVoice[]) {
   console.log(voices);
@@ -25,6 +28,21 @@ function initializeVoices(voices: SpeechSynthesisVoice[]) {
 }
 
 function App() {
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(speechSynthesis.getVoices());
+
+  useEffect(() => {
+    const updateVoices = () => {
+      setVoices(speechSynthesis.getVoices());
+    };
+
+    updateVoices();
+    speechSynthesis.addEventListener("voiceschanged", updateVoices);
+
+    return () => {
+      speechSynthesis.removeEventListener("voiceschanged", updateVoices);
+    };
+  }, []);
+
   const [randomWord, setRandomWord] = useState("start");
   const [textInput, setTextInput] = useState("");
   let wordclass = "random-word-default";
@@ -33,11 +51,13 @@ function App() {
   const [correctCounter, setcorrectCounter] = useState(0);
   const [falseCounter, setfalseCounter] = useState(0);
   const [lastFalseWord, setlastFalseWord] = useState("-");
-  const voices = window.speechSynthesis.getVoices();
   const matching = randomWord.startsWith(textInput);
-  const [logo, setLogo] = useState(penguin) 
-
-  const voice = initializeVoices(voices);
+  const [logo, setLogo] = useState(penguin);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [voice, setVoice] = useState(initializeVoices(voices));
+  const [volume, setVolume] = useState(1);
+  const [pitch, setPitch] = useState(1.05);
+  const [rate, setRate] = useState(0.8);
 
   console.log(voice?.name);
 
@@ -51,9 +71,9 @@ function App() {
 
     const sentence = "spell " + word;
     const utterance = new SpeechSynthesisUtterance(sentence);
-    utterance.volume = 1;
-    utterance.pitch = 1.05;
-    utterance.rate = 0.8;
+    utterance.volume = volume;
+    utterance.pitch = pitch;
+    utterance.rate = rate;
     if (voice != null) {
       utterance.voice = voice ?? null;
     }
@@ -99,7 +119,7 @@ function App() {
             <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
               info
             </button>
-            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
+            <button type="button" className="header-button" onClick={() => setOpenSettings(!openSettings)}>
               settings
             </button>
           </div>
@@ -121,9 +141,9 @@ function App() {
               onChange={(event) => {
                 const value = event.target.value;
                 setTextInput(value);
-                const lowerCasedValue = value.toLowerCase()
-                if (lowerCasedValue === 'astolfo') {
-                  setLogo(alfonso);
+                const lowerCasedValue = value.toLowerCase();
+                if (lowerCasedValue === "astolfo") {
+                  setLogo(astolfo);
                 }
               }}
               onKeyDown={(event) => {
@@ -140,10 +160,95 @@ function App() {
             <p className="streakCounter">streak: {streakCounter}</p>
             <p className="streakCounter">correct: {correctCounter}</p>
             <p className="streakCounter">false: {falseCounter}</p>
-            <p>last false word:<br />{lastFalseWord}</p>
+            <p>
+              last false word:
+              <br />
+              {lastFalseWord}
+            </p>
           </div>
         </div>
       </section>
+      {openSettings && (
+        <div className="overlay-backdrop" onClick={() => setOpenSettings(false)}>
+          <div className="overlay" onClick={(event) => event.stopPropagation()}>
+            <div className="container settings-header">
+              <h2>Settings</h2>
+              <button type="button" className="header-button close" onClick={() => setOpenSettings(false)}>
+                ×
+              </button>
+            </div>
+            <div className="flex column">
+              <div className="settings-option slider-option">
+                <label htmlFor="volume">Volume: </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume * 100}
+                  className="slider"
+                  id="volume"
+                  onChange={(event) => setVolume(Number(event.target.value) / 100)}
+                />
+                <button className="button" onClick={() => setVolume(1)}>
+                  reset to default
+                </button>
+              </div>
+              <div className="settings-option slider-option">
+                <label htmlFor="pitch">Pitch: </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="200"
+                  value={pitch * 100}
+                  className="slider"
+                  id="pitch"
+                  onChange={(event) => setPitch(Number(event.target.value) / 100)}
+                />
+                <button className="button" onClick={() => setPitch(1.05)}>
+                  reset to default
+                </button>
+              </div>
+              <div className="settings-option slider-option">
+                <label htmlFor="rate">Rate: </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="300"
+                  value={rate * 100}
+                  className="slider"
+                  id="rate"
+                  onChange={(event) => setRate(Number(event.target.value) / 100)}
+                />
+                <button className="button" onClick={() => setRate(0.8)}>
+                  reset to default
+                </button>
+              </div>
+              <div className="settings-option">
+                <select
+                  value={voice?.name ?? ""}
+                  onChange={(event) => {
+                    const selectedVoice = voices.find((v) => v.name === event.target.value);
+
+                    if (selectedVoice) {
+                      setVoice(selectedVoice);
+                    }
+                  }}
+                >
+                  {voices.map((v) => (
+                    <option key={v.name} value={v.name}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="settings-option">
+                <label htmlFor="option1">Option X</label>
+                <input id="option1" type="checkbox" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
