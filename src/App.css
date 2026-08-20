@@ -63,6 +63,10 @@
     0rem 0rem 4rem rgba(255, 255, 255, 0.13);
 }
 
+.settings-container {
+  padding-top: 1.5rem;
+}
+
 .settings-header {
   display: grid;
   align-items: center;
@@ -72,6 +76,7 @@
 .settings-header h2 {
   font-size: 1.5rem;
   grid-column: 2;
+  padding: 1.5rem;
 }
 
 .settings-header button {
@@ -81,7 +86,7 @@
 
 .settings-option {
   display: flex;
-  width: 70%;
+  width: 52%;
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
@@ -90,9 +95,17 @@
 }
 
 .settings-option label {
-  width: 7rem;
-  flex: 0 0 5rem;
+  width: 10rem;
+  flex: 0 0 9rem;
   text-align: left;
+}
+
+#voices, #dictionaries {
+  max-width: 40%;
+}
+
+#option1 {
+  margin-top: 0.35em;
 }
 
 .header-button {

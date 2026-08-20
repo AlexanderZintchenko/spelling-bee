@@ -224,7 +224,7 @@ function App() {
                 ×
               </button>
             </div>
-            <div className="flex column">
+            <div className="flex column settings-container">
               <div className="settings-option slider-option">
                 <label htmlFor="volume">Volume: </label>
                 <input
@@ -338,7 +338,7 @@ function App() {
                 </select>
               </div>
               <div className="settings-option">
-                <label htmlFor="option1">Sectret Option</label>
+                <label htmlFor="option1">Secret Option:</label>
                 <input id="option1" type="checkbox" />
               </div>
             </div>
