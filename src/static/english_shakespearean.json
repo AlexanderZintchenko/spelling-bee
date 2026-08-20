@@ -1,203 +1,776 @@
 {
-  "name": "english_shakespearean",
-  "noLazyMode": true,
-  "orderedByFrequency": false,
-  "comment": "",
-  "bcp47": "",
-  "additionalAccents": [],
   "words": [
-    "hark",
-    "thou",
-    "thy",
-    "thine",
-    "thee",
-    "hast",
-    "art",
-    "dost",
-    "wilt",
-    "shalt",
-    "hence",
-    "hither",
-    "anon",
-    "methinks",
-    "prithee",
-    "quaint",
-    "alas",
-    "betray",
-    "trouble",
-    "toil",
-    "o'er-raught",
-    "o'er-wrought",
-    "abhor",
-    "absolute",
-    "addiction",
-    "balk",
-    "brave",
-    "character",
-    "coil",
-    "couch",
-    "cunning",
-    "delation",
-    "deserving",
-    "draw",
-    "egal",
-    "emboss",
-    "expedience",
-    "fancy",
-    "fear",
-    "front",
-    "ghast",
-    "grave",
-    "heavy",
-    "honest",
-    "inherit",
-    "judicious",
-    "knap",
-    "knave",
-    "land",
-    "lapsed",
-    "mad",
-    "mate",
-    "note",
-    "painful",
-    "pall",
-    "petticoat",
-    "perpend",
-    "quake",
-    "quicken",
-    "rapture",
-    "ravin",
-    "respect",
-    "retire",
-    "shrift",
-    "simular",
-    "still",
-    "subscription",
-    "take",
-    "tax",
-    "testy",
-    "trigon",
-    "undergo",
-    "unpregnant",
-    "vile",
-    "vindictive",
-    "wall-eyed",
-    "want",
-    "wherefore",
-    "yare",
-    "young",
-    "zany",
-    "abide",
-    "ay",
-    "banish",
-    "base",
-    "bawd",
-    "birth",
-    "blush",
-    "brevity",
-    "brother",
-    "bubble",
-    "canker",
-    "chamber",
-    "chide",
-    "cloak",
-    "comfort",
-    "conceit",
-    "conscience",
-    "counsel",
-    "coward",
-    "danger",
-    "determine",
-    "disguise",
-    "doubt",
-    "dull",
-    "duty",
-    "eloquent",
-    "embrace",
-    "envious",
-    "epitaph",
-    "esteem",
-    "excel",
-    "exile",
-    "fashion",
-    "fellow",
-    "flatter",
-    "fortune",
-    "frown",
-    "gallant",
-    "gentle",
-    "gossip",
-    "grief",
-    "haste",
-    "heaven",
-    "hollow",
-    "honesty",
-    "horror",
-    "idle",
-    "jealous",
-    "jewel",
-    "kiss",
-    "lament",
-    "laugh",
-    "lonely",
-    "love",
-    "madness",
-    "majesty",
-    "mercy",
-    "mirth",
-    "monarch",
-    "murder",
-    "music",
-    "noble",
-    "noise",
-    "obey",
-    "occasion",
-    "opinion",
-    "paradise",
-    "passion",
-    "patience",
-    "perjury",
-    "pleasure",
-    "poison",
-    "praise",
-    "prosper",
-    "proud",
-    "punish",
-    "rebel",
-    "rejoice",
-    "revenge",
-    "sacred",
-    "satisfaction",
-    "secret",
-    "serpent",
-    "shame",
-    "silence",
-    "slander",
-    "sleep",
-    "solitude",
-    "sorrow",
-    "splendid",
-    "star",
-    "storm",
-    "tempest",
-    "tempt",
-    "thunder",
-    "tongue",
-    "treason",
-    "triumph",
-    "valiant",
-    "villain",
-    "virtue",
-    "victory",
-    "violence",
-    "warrant",
-    "weep",
-    "whisper",
-    "witness",
-    "wonder",
-    "worship",
-    "wrath",
-    "lord",
-    "lady"
+    {
+      "word": "hark",
+      "definition": "No definition available."
+    },
+    {
+      "word": "thou",
+      "definition": "Another word for you; ____ is an old word, and people do not use it much anymore. Often when ____ is used it is with other old words."
+    },
+    {
+      "word": "thy",
+      "definition": "___ things are things which belong to you (one person)."
+    },
+    {
+      "word": "thine",
+      "definition": "No definition available."
+    },
+    {
+      "word": "thee",
+      "definition": "Another word for you."
+    },
+    {
+      "word": "hast",
+      "definition": "No definition available."
+    },
+    {
+      "word": "art",
+      "definition": "An ___ is a skill that produces works of creative expression and can be mastered through study and practice. Arts are often contrasted with sciences."
+    },
+    {
+      "word": "dost",
+      "definition": "No definition available."
+    },
+    {
+      "word": "wilt",
+      "definition": "No definition available."
+    },
+    {
+      "word": "shalt",
+      "definition": "No definition available."
+    },
+    {
+      "word": "hence",
+      "definition": "for this reason"
+    },
+    {
+      "word": "hither",
+      "definition": "No definition available."
+    },
+    {
+      "word": "anon",
+      "definition": "No definition available."
+    },
+    {
+      "word": "methinks",
+      "definition": "No definition available."
+    },
+    {
+      "word": "prithee",
+      "definition": "No definition available."
+    },
+    {
+      "word": "quaint",
+      "definition": "If someone is ______, they are attractively unusual."
+    },
+    {
+      "word": "alas",
+      "definition": "You use \"____\" to express regret."
+    },
+    {
+      "word": "betray",
+      "definition": "If you ______ someone, you cause great harm to someone who considered you a friend or ally."
+    },
+    {
+      "word": "trouble",
+      "definition": "Difficult or bad things happening; problems."
+    },
+    {
+      "word": "toil",
+      "definition": "____ is very hard labour or work."
+    },
+    {
+      "word": "o'er-raught",
+      "definition": "No definition available."
+    },
+    {
+      "word": "o'er-wrought",
+      "definition": "No definition available."
+    },
+    {
+      "word": "abhor",
+      "definition": "To hate very, very much; to feel disgust for."
+    },
+    {
+      "word": "absolute",
+      "definition": "An ________ is something that will always exist."
+    },
+    {
+      "word": "addiction",
+      "definition": "An _________ is when someone is addicted to something, usually drugs."
+    },
+    {
+      "word": "balk",
+      "definition": "A ____ is a squared timber."
+    },
+    {
+      "word": "brave",
+      "definition": "If you are _____, fear will not stop you."
+    },
+    {
+      "word": "character",
+      "definition": "Someone's _________ is the combination of things that they do, feel, and believe that makes them a certain type of person."
+    },
+    {
+      "word": "coil",
+      "definition": "A ____ is a long object in circular piles \"wound continuously round one point\"."
+    },
+    {
+      "word": "couch",
+      "definition": "A soft, plush seat for one or more people, often made of leather or cloth."
+    },
+    {
+      "word": "cunning",
+      "definition": "_______ is the skill of being very clever, usually to trick or fool someone else."
+    },
+    {
+      "word": "delation",
+      "definition": "No definition available."
+    },
+    {
+      "word": "deserving",
+      "definition": "The present participle of deserve."
+    },
+    {
+      "word": "draw",
+      "definition": "When you ____, you use a pencil, pen, crayon, etc. to make a picture."
+    },
+    {
+      "word": "egal",
+      "definition": "No definition available."
+    },
+    {
+      "word": "emboss",
+      "definition": "If you ______ something, you decorate it with a raised design."
+    },
+    {
+      "word": "expedience",
+      "definition": "No definition available."
+    },
+    {
+      "word": "fancy",
+      "definition": "If something is _____, it nicer than usual, often with decorations and bright colours."
+    },
+    {
+      "word": "fear",
+      "definition": "To have a ____ of someone or something means to be scared of someone or something; to be afraid of someone or something."
+    },
+    {
+      "word": "front",
+      "definition": "Opposite of back."
+    },
+    {
+      "word": "ghast",
+      "definition": "No definition available."
+    },
+    {
+      "word": "grave",
+      "definition": "If a problem or situation is _____, it is bad and serious."
+    },
+    {
+      "word": "heavy",
+      "definition": "Having a lot of weight."
+    },
+    {
+      "word": "honest",
+      "definition": "If you are ______, you do not hide the truth; you don't lie, cheat, or steal."
+    },
+    {
+      "word": "inherit",
+      "definition": "Getting the characteristics of its parents."
+    },
+    {
+      "word": "judicious",
+      "definition": "No definition available."
+    },
+    {
+      "word": "knap",
+      "definition": "A ____ is the crest of a hill."
+    },
+    {
+      "word": "knave",
+      "definition": "No definition available."
+    },
+    {
+      "word": "land",
+      "definition": "____ is the part of the Earth that is not covered with water"
+    },
+    {
+      "word": "lapsed",
+      "definition": "The past tense and past participle of lapse."
+    },
+    {
+      "word": "mad",
+      "definition": "If someone is ___, they are angry."
+    },
+    {
+      "word": "mate",
+      "definition": "A ____ is someone you do something with."
+    },
+    {
+      "word": "note",
+      "definition": "A ____ is a single sound in music."
+    },
+    {
+      "word": "painful",
+      "definition": "If something is _______, is causes pain, either physical or mental."
+    },
+    {
+      "word": "pall",
+      "definition": "No definition available."
+    },
+    {
+      "word": "petticoat",
+      "definition": "No definition available."
+    },
+    {
+      "word": "perpend",
+      "definition": "No definition available."
+    },
+    {
+      "word": "quake",
+      "definition": "A _____ refers to an earthquake, the shaking of the ground."
+    },
+    {
+      "word": "quicken",
+      "definition": "If you _______ something, you make it become faster."
+    },
+    {
+      "word": "rapture",
+      "definition": "No definition available."
+    },
+    {
+      "word": "ravin",
+      "definition": "No definition available."
+    },
+    {
+      "word": "respect",
+      "definition": "When someone respects another person that means they think the other person is worthy, responsible, strong or other good qualities."
+    },
+    {
+      "word": "retire",
+      "definition": "If you ______, you stop working, usually because of your age."
+    },
+    {
+      "word": "shrift",
+      "definition": "No definition available."
+    },
+    {
+      "word": "simular",
+      "definition": "No definition available."
+    },
+    {
+      "word": "still",
+      "definition": "Now like in the past."
+    },
+    {
+      "word": "subscription",
+      "definition": "Having access to a resource for a period of time."
+    },
+    {
+      "word": "take",
+      "definition": "If you ____ an action, you do it."
+    },
+    {
+      "word": "tax",
+      "definition": "Money taken by a government."
+    },
+    {
+      "word": "testy",
+      "definition": "No definition available."
+    },
+    {
+      "word": "trigon",
+      "definition": "No definition available."
+    },
+    {
+      "word": "undergo",
+      "definition": "If you _______ something, it happens to you; often it is not nice."
+    },
+    {
+      "word": "unpregnant",
+      "definition": "No definition available."
+    },
+    {
+      "word": "vile",
+      "definition": "No definition available."
+    },
+    {
+      "word": "vindictive",
+      "definition": "If a person is __________, they have a strong desire to seek revenge when wronged."
+    },
+    {
+      "word": "wall-eyed",
+      "definition": "No definition available."
+    },
+    {
+      "word": "want",
+      "definition": "If you ____ to do something, you think you would be happier if you did it."
+    },
+    {
+      "word": "wherefore",
+      "definition": "No definition available."
+    },
+    {
+      "word": "yare",
+      "definition": "No definition available."
+    },
+    {
+      "word": "young",
+      "definition": "If you are _____, you have not lived a long time."
+    },
+    {
+      "word": "zany",
+      "definition": "Something or someone that is ____ is very weird."
+    },
+    {
+      "word": "abide",
+      "definition": "If you can't _____ something, you really do not like it."
+    },
+    {
+      "word": "ay",
+      "definition": "No definition available."
+    },
+    {
+      "word": "banish",
+      "definition": "To send someone away and to forbid him from returning."
+    },
+    {
+      "word": "base",
+      "definition": "Something's ____ is its lower part; the solid part that touches the floor or touches the earth and keeps the other parts of the thing up."
+    },
+    {
+      "word": "bawd",
+      "definition": "No definition available."
+    },
+    {
+      "word": "birth",
+      "definition": "A _____ is when a new baby comes out of its mother."
+    },
+    {
+      "word": "blush",
+      "definition": "A _____ is a type of wine with a slight pink tint."
+    },
+    {
+      "word": "brevity",
+      "definition": "No definition available."
+    },
+    {
+      "word": "brother",
+      "definition": "Your _______ is another male child of one or both of your parents."
+    },
+    {
+      "word": "bubble",
+      "definition": "A ______ is a volume of air trapped in a liquid and can float in the air."
+    },
+    {
+      "word": "canker",
+      "definition": "No definition available."
+    },
+    {
+      "word": "chamber",
+      "definition": "A _______ is a room that is often used for sleeping."
+    },
+    {
+      "word": "chide",
+      "definition": "No definition available."
+    },
+    {
+      "word": "cloak",
+      "definition": "A _____ is a long outer garment that is worn over the shoulders and covering the back."
+    },
+    {
+      "word": "comfort",
+      "definition": "_______ is a feeling in your body that there are no problems."
+    },
+    {
+      "word": "conceit",
+      "definition": "No definition available."
+    },
+    {
+      "word": "conscience",
+      "definition": "The ability to feel whether what you're doing is right or wrong."
+    },
+    {
+      "word": "counsel",
+      "definition": "_______ is the giving or receiving of advice."
+    },
+    {
+      "word": "coward",
+      "definition": "A ______ is a person who does not have courage."
+    },
+    {
+      "word": "danger",
+      "definition": "A ______ is something that can hurt or kill a person."
+    },
+    {
+      "word": "determine",
+      "definition": "If A determines the outcome of B, A causes B to occur in a certain way."
+    },
+    {
+      "word": "disguise",
+      "definition": "________ is a thing (e.g. clothing) used to hide one's identity or pretend to be another."
+    },
+    {
+      "word": "doubt",
+      "definition": "A _____ is a question or uncertainty about something."
+    },
+    {
+      "word": "dull",
+      "definition": "A ____ object is not sharp."
+    },
+    {
+      "word": "duty",
+      "definition": "A ____ is something that you should do."
+    },
+    {
+      "word": "eloquent",
+      "definition": "An ________ is a person who speaks fluently."
+    },
+    {
+      "word": "embrace",
+      "definition": "If you _______ someone, you hold them closely in your arms with love."
+    },
+    {
+      "word": "envious",
+      "definition": "When someone is _______, that person is jealous and has the feeling of wanting something that someone else has."
+    },
+    {
+      "word": "epitaph",
+      "definition": "No definition available."
+    },
+    {
+      "word": "esteem",
+      "definition": "A good opinion of someone or a view of high importance and respect for them."
+    },
+    {
+      "word": "excel",
+      "definition": "If you _____ at something, you do it very well."
+    },
+    {
+      "word": "exile",
+      "definition": "An _____ is someone who is not allowed to go to the place they came from."
+    },
+    {
+      "word": "fashion",
+      "definition": "A _______ is a style, often clothing, that is popular at a particular time and place."
+    },
+    {
+      "word": "fellow",
+      "definition": "A ______ is a friend; a partner; a companion."
+    },
+    {
+      "word": "flatter",
+      "definition": "The comparative form of flat; more flat."
+    },
+    {
+      "word": "fortune",
+      "definition": "A _______ is a very large amount of money."
+    },
+    {
+      "word": "frown",
+      "definition": "A _____ is a facial expression whereby the eyebrows are brought closer together and wrinkles form on the forehead. A _____ usually happens when a person is unhappy, sad or worried, but can also be very focused on doing something."
+    },
+    {
+      "word": "gallant",
+      "definition": "No definition available."
+    },
+    {
+      "word": "gentle",
+      "definition": "A ______ person is kind and careful not to cause damage, pain, or surprise."
+    },
+    {
+      "word": "gossip",
+      "definition": "______ is information that people pass around about other people's lives, often including things that are unkind or untrue."
+    },
+    {
+      "word": "grief",
+      "definition": "_____ is great sadness."
+    },
+    {
+      "word": "haste",
+      "definition": "If you make _____, you try to do something quickly and soon."
+    },
+    {
+      "word": "heaven",
+      "definition": "In some religions and myths, ______ is a place where you may go after you die. ______ is usually seen as a happy place where good people are rewarded."
+    },
+    {
+      "word": "hollow",
+      "definition": "If something has nothing inside of it, it is ______."
+    },
+    {
+      "word": "honesty",
+      "definition": "The quality of being honest. If you have _______, you tell the truth."
+    },
+    {
+      "word": "horror",
+      "definition": "______ is great fear."
+    },
+    {
+      "word": "idle",
+      "definition": "If someone is ____, they are not active or working."
+    },
+    {
+      "word": "jealous",
+      "definition": "To be _______ is to want something someone else has."
+    },
+    {
+      "word": "jewel",
+      "definition": "A valuable gem; a precious stone."
+    },
+    {
+      "word": "kiss",
+      "definition": "The act of placing your lips on something, usually to show love or affection."
+    },
+    {
+      "word": "lament",
+      "definition": "______ is an expression of grief, suffering or regret."
+    },
+    {
+      "word": "laugh",
+      "definition": "Someone laughs when they make a sound with their mouth because they think something is funny. It can sound like \"ha ha\", \"ho ho\", \"hee hee\", etc."
+    },
+    {
+      "word": "lonely",
+      "definition": "If you feel ______, you feel sad because you are alone."
+    },
+    {
+      "word": "love",
+      "definition": "When someone loves another person, they feel good about the person and want the person to be happy."
+    },
+    {
+      "word": "madness",
+      "definition": "_______ is the state of being mad or insane."
+    },
+    {
+      "word": "majesty",
+      "definition": "royal power, a title given to a king or queen, His - , Her –, Your -"
+    },
+    {
+      "word": "mercy",
+      "definition": "_____ is the quality of kindness and forgiveness that stops you from harming or punishing somebody who you could harm or punish."
+    },
+    {
+      "word": "mirth",
+      "definition": "No definition available."
+    },
+    {
+      "word": "monarch",
+      "definition": "A _______ is the leader of a kingdom or empire."
+    },
+    {
+      "word": "murder",
+      "definition": "______ is when one person plans to hurt or kill somebody and they kill somebody."
+    },
+    {
+      "word": "music",
+      "definition": "Sounds that are played on musical instruments or sung with a certain rhythm and harmony, and forming melodies."
+    },
+    {
+      "word": "noble",
+      "definition": "A _____ is an aristocrat; a member of the highest social class."
+    },
+    {
+      "word": "noise",
+      "definition": "A _____ is a sound, usually one that you don't want."
+    },
+    {
+      "word": "obey",
+      "definition": "____ is to do what a person tells you to do."
+    },
+    {
+      "word": "occasion",
+      "definition": "An ________ is a particular time."
+    },
+    {
+      "word": "opinion",
+      "definition": "An _______ is a personal idea, a person’s thoughts on a topic."
+    },
+    {
+      "word": "paradise",
+      "definition": "A ________ is a very pleasant and beautiful place."
+    },
+    {
+      "word": "passion",
+      "definition": "_______ is a strong feeling or emotion."
+    },
+    {
+      "word": "patience",
+      "definition": "If someone has ________, they can wait without feeling upset."
+    },
+    {
+      "word": "perjury",
+      "definition": "If a person commits _______, they deliberately give of false or misleading testimony under oath."
+    },
+    {
+      "word": "pleasure",
+      "definition": "________ is a nice feeling we have when we do something that's fun or that feels good."
+    },
+    {
+      "word": "poison",
+      "definition": "______ is any substance that makes people or animals sick or kills them if it gets into their body."
+    },
+    {
+      "word": "praise",
+      "definition": "If you ______ someone, then you say good things about them."
+    },
+    {
+      "word": "prosper",
+      "definition": "If somebody prospers, they become wealthy or successful."
+    },
+    {
+      "word": "proud",
+      "definition": "If you are _____ of or about something you have done, you feel good about it."
+    },
+    {
+      "word": "punish",
+      "definition": "To ______ someone means to cause someone to suffer, because they have broken a rule."
+    },
+    {
+      "word": "rebel",
+      "definition": "A _____ is somebody who fights against power, especially against your own government."
+    },
+    {
+      "word": "rejoice",
+      "definition": "If you _______, you act in a way that shows that you feel very happy about something."
+    },
+    {
+      "word": "revenge",
+      "definition": "_______ is the act of hurting someone because they have hurt you."
+    },
+    {
+      "word": "sacred",
+      "definition": "If something is ______, it is put aside for use by religion; it is made holy."
+    },
+    {
+      "word": "satisfaction",
+      "definition": "____________ is a feeling when a need or want has been fulfilled or achieved."
+    },
+    {
+      "word": "secret",
+      "definition": "Hidden or unknown information."
+    },
+    {
+      "word": "serpent",
+      "definition": "A _______ is a snake, or an animal that looks like a snake."
+    },
+    {
+      "word": "shame",
+      "definition": "Someone feels _____ when they know they did something wrong."
+    },
+    {
+      "word": "silence",
+      "definition": "_______ is when no noise is heard."
+    },
+    {
+      "word": "slander",
+      "definition": "A _______ is the crime of making a false spoken statement damaging to a person's reputation."
+    },
+    {
+      "word": "sleep",
+      "definition": "If you _____, you rest quietly with eyes shut, usually in bed for many hours at night."
+    },
+    {
+      "word": "solitude",
+      "definition": "________ is the state of being alone."
+    },
+    {
+      "word": "sorrow",
+      "definition": "______ is sadness or unhappiness."
+    },
+    {
+      "word": "splendid",
+      "definition": "If something is ________, it is very impressive and magnificent."
+    },
+    {
+      "word": "star",
+      "definition": "A ____ is a bright thing in the sky at night. The sun is also one of stars."
+    },
+    {
+      "word": "storm",
+      "definition": "A _____ is bad weather with high winds that disturbs the atmosphere."
+    },
+    {
+      "word": "tempest",
+      "definition": "A _______ is a storm, usually with strong winds."
+    },
+    {
+      "word": "tempt",
+      "definition": "When you _____ someone, you try to get someone to do something, perhaps something bad or immoral."
+    },
+    {
+      "word": "thunder",
+      "definition": "_______ is the sound made by lightning."
+    },
+    {
+      "word": "tongue",
+      "definition": "The part of the body that tastes food. It is pink or red and is inside the mouth."
+    },
+    {
+      "word": "treason",
+      "definition": "_______ is the crime of betraying one’s own country."
+    },
+    {
+      "word": "triumph",
+      "definition": "A _______ is a great success."
+    },
+    {
+      "word": "valiant",
+      "definition": "A _______ person is someone who possesses or shows courage."
+    },
+    {
+      "word": "villain",
+      "definition": "A _______ is a very bad person, often a criminal."
+    },
+    {
+      "word": "virtue",
+      "definition": "A ______ is a morally good characteristic in a person. For example, honesty, patience, etc."
+    },
+    {
+      "word": "victory",
+      "definition": "A _______ is the act or result of winning."
+    },
+    {
+      "word": "violence",
+      "definition": "________ is an action done to hurt somebody or something."
+    },
+    {
+      "word": "warrant",
+      "definition": "A _______ is a certificate that allows someone to do something, as stated in the _______ itself."
+    },
+    {
+      "word": "weep",
+      "definition": "To ____ is to cry or bawl."
+    },
+    {
+      "word": "whisper",
+      "definition": "When you _______ to someone, you talk very quietly; to talk with breath but no voice, with a quiet sound like the wind, so only people very near can hear what you say."
+    },
+    {
+      "word": "witness",
+      "definition": "A _______ is somebody who saw something, especially a crime."
+    },
+    {
+      "word": "wonder",
+      "definition": "If you ______ about something, you think about it because you want to know more about it."
+    },
+    {
+      "word": "worship",
+      "definition": "Belief or devotion to a god or other higher power."
+    },
+    {
+      "word": "wrath",
+      "definition": "No definition available."
+    },
+    {
+      "word": "lord",
+      "definition": "The ____ is a Judeo-Christian title for God."
+    },
+    {
+      "word": "lady",
+      "definition": "A polite way of saying \"woman\"."
+    }
   ]
 }

@@ -134,12 +134,19 @@
 }
 
 .column {
+  flex: 1;
   flex-direction: column;
   gap: 1.2rem;
   
 }
 
 .row {
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.row-right {
   align-items: end;
   flex-direction: row;
   justify-content: end;
@@ -163,6 +170,21 @@ header {
 
 .bg-beige {
   background-color: beige;
+}
+
+.center-div {
+  flex: 0 0 auto;
+}
+
+.left, .right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.definition-box {
+  width: 50%;
 }
 
 h1 {
