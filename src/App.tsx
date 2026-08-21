@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import type { Dictionary } from "./dictionary.types";
 //import logo from "./assets/anime_peace.png";
-import penguin from "./assets/penguin.png";
-import astolfo from "./assets/louie.png";
+import penguin from "./assets/penguin.webp";
+import astolfo from "./assets/louie.webp";
 import "./App.css";
 import english5k from "./static/english_5k.json";
 //import english10k from "./static/english_10k.json";
