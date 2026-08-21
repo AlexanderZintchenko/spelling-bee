@@ -85,7 +85,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
 
   const [volume, setVolume] = useState(0.5);
-  const [pitch, setPitch] = useState(1.5);
+  const [pitch, setPitch] = useState(0.8);
   const [rate, setRate] = useState(0.8);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
   const [dictionaryId, setDictionaryId] = useState("0");
