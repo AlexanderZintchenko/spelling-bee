@@ -348,10 +348,6 @@ function App() {
                   <option value="4">German - 10k</option>
                 </select>
               </div>
-              <div className="settings-option">
-                <label htmlFor="option1">Secret Option:</label>
-                <input id="option1" type="checkbox" />
-              </div>
             </div>
           </div>
         </div>
