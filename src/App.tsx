@@ -84,9 +84,12 @@ function App() {
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
 
-  const [volume, setVolume] = useState(0.5);
-  const [pitch, setPitch] = useState(0.8);
-  const [rate, setRate] = useState(0.8);
+  const DEFAULT_VOLUME = 0.5;
+  const DEFAULT_PITCH = 1;
+  const DEFAULT_RATE = 0.8;
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  const [pitch, setPitch] = useState(DEFAULT_PITCH);
+  const [rate, setRate] = useState(DEFAULT_RATE);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
   const [dictionaryId, setDictionaryId] = useState("0");
   const [definition, setDefinition] = useState("");
@@ -244,7 +247,7 @@ function App() {
                   id="volume"
                   onChange={(event) => setVolume(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setVolume(1)}>
+                <button className="button" onClick={() => setVolume(DEFAULT_VOLUME)}>
                   reset to default
                 </button>
               </div>
@@ -259,7 +262,7 @@ function App() {
                   id="pitch"
                   onChange={(event) => setPitch(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setPitch(1.05)}>
+                <button className="button" onClick={() => setPitch(DEFAULT_PITCH)}>
                   reset to default
                 </button>
               </div>
@@ -274,7 +277,7 @@ function App() {
                   id="rate"
                   onChange={(event) => setRate(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setRate(0.8)}>
+                <button className="button" onClick={() => setRate(DEFAULT_RATE)}>
                   reset to default
                 </button>
               </div>
