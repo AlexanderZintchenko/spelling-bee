@@ -27,7 +27,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
   return [value, setValue] as const;
 }
 
-function initializeVoices(voices: SpeechSynthesisVoice[]) {
+function initializeVoice(voices: SpeechSynthesisVoice[]) {
   console.log(voices);
   let voice = voices.find((voice) => voice.name === "Google UK English Male");
 
@@ -60,7 +60,7 @@ function App() {
       const availableVoices = speechSynthesis.getVoices();
 
       setVoices(availableVoices);
-      setVoice(initializeVoices(availableVoices));
+      setVoice(initializeVoice(availableVoices));
     };
 
     updateVoices();
@@ -79,17 +79,17 @@ function App() {
   const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
   const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
   const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
-  const [lastFalseWord, setlastFalseWord] = useState("-");
+  const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
   const matching = randomWord.startsWith(textInput);
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
 
-  const [volume, setVolume] = useState(1);
-  const [pitch, setPitch] = useState(1.05);
+  const [volume, setVolume] = useState(0.5);
+  const [pitch, setPitch] = useState(1.5);
   const [rate, setRate] = useState(0.8);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
   const [dictionaryId, setDictionaryId] = useState("0");
-  const [definition, setDefinition] = useState("")
+  const [definition, setDefinition] = useState("");
 
   console.log(voice?.name);
 
@@ -104,7 +104,7 @@ function App() {
     // eslint-disable-next-line no-useless-assignment
     let sentence = "";
 
-    if (dictionaryId == "4") {
+    if (dictionaryId === "4") {
       sentence = "Buchstabiere " + word + "!";
     } else {
       sentence = "Spell " + word + "!";
@@ -115,7 +115,7 @@ function App() {
     utterance.pitch = pitch;
     utterance.rate = rate;
     if (voice != null) {
-      utterance.voice = voice ?? null;
+      utterance.voice = voice;
     }
 
     window.speechSynthesis.speak(utterance);
@@ -136,7 +136,7 @@ function App() {
 
       if (textInput.length > 0) {
         setFalseCounter((current) => current + 1);
-        setlastFalseWord(randomWord);
+        setLastFalseWord(randomWord);
       }
     }
 
@@ -158,71 +158,71 @@ function App() {
 
   return (
     <>
-        <header className="flex row-right">
-          <div className="ayo">
-            <p></p>
-          </div>
-          <div className="flex container row">
-            <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
-              info
-            </button>
-            <button type="button" className="header-button" onClick={() => setOpenSettings(!openSettings)}>
-              settings
-            </button>
-          </div>
-        </header>
-        <div className="flex row">
-          <div className="left">
-            <div className="definition-box">
-              <p>{definition}</p>
-            </div>
-          </div>
-          <div className="flex column">
-            <div className="hero flex column less-gap">
-              <img src={logo} id="logo" className="logo" alt="anime peace sign" />
-              <h1 className="">Spelling Bee Prototype</h1>
-            </div>
-            <div className="flex column container">
-              <p className={wordclass}>{randomWord}</p>
-              <button type="button" className="generator" onClick={() => generateRandomWord()}>
-                Generate random word
-              </button>
-              <input
-                ref={inputRef}
-                className={`textInput ${matching ? "" : "notMatching"}`}
-                value={textInput}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  setTextInput(value);
-                  const lowerCasedValue = value.toLowerCase();
-                  if (lowerCasedValue === "astolfo") {
-                    setLogo(astolfo);
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    generateRandomWord();
-                  } else if (event.key === "Control") {
-                    wordToSpeech(randomWord);
-                  }
-                }}
-              />
-              <button type="button" className="repeat-button" onClick={() => wordToSpeech(randomWord)}>
-                🕪
-              </button>
-              <p className="streakCounter">streak: {streakCounter}</p>
-              <p className="streakCounter">best streak: {bestStreakCounter}</p>
-              <p className="streakCounter">correct: {correctCounter}</p>
-              <p className="streakCounter">false: {falseCounter}</p>
-              <p>
-                last false word:
-                <br />
-                {lastFalseWord}
-              </p>
-            </div>
-          </div>
-          <div className="right"></div>
+      <header className="flex row-right">
+        <div className="ayo">
+          <p></p>
         </div>
+        <div className="flex container row">
+          <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
+            info
+          </button>
+          <button type="button" className="header-button" onClick={() => setOpenSettings(!openSettings)}>
+            settings
+          </button>
+        </div>
+      </header>
+      <div className="flex row">
+        <div className="left">
+          <div className="definition-box">
+            <p>{definition}</p>
+          </div>
+        </div>
+        <div className="flex column">
+          <div className="hero flex column less-gap">
+            <img src={logo} id="logo" className="logo" alt="anime peace sign" />
+            <h1 className="">Spelling Bee Prototype</h1>
+          </div>
+          <div className="flex column container">
+            <p className={wordclass}>{randomWord}</p>
+            <button type="button" className="generator" onClick={() => generateRandomWord()}>
+              Generate random word
+            </button>
+            <input
+              ref={inputRef}
+              className={`textInput ${matching ? "" : "notMatching"}`}
+              value={textInput}
+              onChange={(event) => {
+                const value = event.target.value;
+                setTextInput(value);
+                const lowerCasedValue = value.toLowerCase();
+                if (lowerCasedValue === "astolfo") {
+                  setLogo(astolfo);
+                }
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  generateRandomWord();
+                } else if (event.key === "Control") {
+                  wordToSpeech(randomWord);
+                }
+              }}
+            />
+            <button type="button" className="repeat-button" onClick={() => wordToSpeech(randomWord)}>
+              🕪
+            </button>
+            <p className="streakCounter">streak: {streakCounter}</p>
+            <p className="streakCounter">best streak: {bestStreakCounter}</p>
+            <p className="streakCounter">correct: {correctCounter}</p>
+            <p className="streakCounter">false: {falseCounter}</p>
+            <p>
+              last false word:
+              <br />
+              {lastFalseWord}
+            </p>
+          </div>
+        </div>
+        <div className="right"></div>
+      </div>
       {openSettings && (
         <div className="overlay-backdrop" onClick={() => setOpenSettings(false)}>
           <div className="overlay" onClick={(event) => event.stopPropagation()}>
