@@ -1,23 +1,50 @@
 import { useState, useRef, useEffect } from "react";
 import type { Dictionary } from "./dictionary.types";
-//import logo from "./assets/anime_peace.png";
 import penguin from "./assets/penguin.webp";
-import astolfo from "./assets/louie.webp";
+import astolfo from "./assets/astolfo_bday.webp";
 import "./App.css";
 import english5k from "./static/english_5k.json";
-//import english10k from "./static/english_10k.json";
-//import english25k from "./static/english_25k.json";
-//import englishShakespearean from "./static/english_shakespearean.json";
-//import german10k from "./static/german_10k.json"
+import * as speech from "./utils/speech.ts"
 
 const preload = new Image();
 preload.src = astolfo;
 
+const DEFAULT_SETTINGS = {
+  volume: 0.5,
+  pitch: 1,
+  rate: 0.75,
+};
+
+const DICTIONARY_IDS = {
+  ENGLISH_5K: "0",
+  ENGLISH_10K: "1",
+  ENGLISH_25K: "2",
+  SHAKESPEAREAN: "3",
+  GERMAN_10K: "4",
+} as const;
+
+const DICTIONARIES = {
+  "0": () => import("./static/english_5k.json"),
+  "1": () => import("./static/english_10k.json"),
+  "2": () => import("./static/english_25k.json"),
+  "3": () => import("./static/english_shakespearean.json"),
+  "4": () => import("./static/german_10k.json"),
+};
+
+/**
+ * Store react state in localStorage so they persist across page reloads.
+ * @param key - the localStorage key.
+ * @param initialValue - the default value used if no stored value exists.
+ * @returns state variable corresponding to the specified key with its setter function.
+ */
 function useLocalStorage<T>(key: string, initialValue: T) {
   const [value, setValue] = useState<T>(() => {
-    const storedValue = localStorage.getItem(key);
-
-    return storedValue !== null ? JSON.parse(storedValue) : initialValue;
+    try {
+      const storedValue = localStorage.getItem(key);
+      return storedValue !== null ? JSON.parse(storedValue) : initialValue;
+    } catch {
+      return initialValue;
+    }
   });
 
   useEffect(() => {
@@ -27,74 +54,61 @@ function useLocalStorage<T>(key: string, initialValue: T) {
   return [value, setValue] as const;
 }
 
+/**
+ * Selects first available voice from preferred voices and falls back to first available voice if none is found.
+ * @param voices - available voices from browsers SpeechSynthesis API.
+ * @returns the first matching voice from preferred voices or the the first available voice.
+ */
 function initializeVoice(voices: SpeechSynthesisVoice[]) {
   console.log(voices);
-  let voice = voices.find((voice) => voice.name === "Google UK English Male");
-
-  if (voice == null) {
-    voice = voices.find((voice) => voice.name === "Microsoft David - English (United Kingdom)");
-  }
-
-  if (voice == null) {
-    voice = voices.find((voice) => voice.name === "Microsoft George - English (United Kingdom)");
-  }
-
-  if (voice == null) {
-    voice = voices.find((voice) => voice.name === "Microsoft Mark - English (United States)");
-  }
-
-  if (voice == null) {
-    voice = voices[0];
-  }
-
-  return voice;
+  return (
+    speech.PREFERRED_VOICES.map((name) => voices.find((voice) => voice.name === name)).find((voice) => voice !== undefined) ??
+    voices[0]
+  );
 }
 
 function App() {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(speechSynthesis.getVoices());
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [voice, setVoice] = useState<SpeechSynthesisVoice | undefined>();
 
-  const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
-
+  /* Initialize the voice once SpeechSynthesis API has loaded its available voices */
   useEffect(() => {
     const updateVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
-
       setVoices(availableVoices);
       setVoice(initializeVoice(availableVoices));
     };
 
     updateVoices();
-    speechSynthesis.addEventListener("voiceschanged", updateVoices);
+    speechSynthesis.addEventListener("voiceschanged", updateVoices); // call updateVoice on voiceschanged (event from WEB speech API)
 
+    //  clean up
     return () => {
       speechSynthesis.removeEventListener("voiceschanged", updateVoices);
     };
   }, []);
 
+  // randomWord, textInput and comparisons
+  const inputRef = useRef<HTMLInputElement>(null);
   const [randomWord, setRandomWord] = useState("start");
   const [textInput, setTextInput] = useState("");
-  let wordclass = "random-word-default";
-  const inputRef = useRef<HTMLInputElement>(null);
+  const isCorrect = textInput.toLowerCase() === randomWord.toLowerCase();
+  const wordClass = isCorrect ? "text-input-correct" : "text-input-not-correct";
+  const matching = randomWord.toLowerCase().startsWith(textInput.toLowerCase());
+
   const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
   const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
   const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
   const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
   const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
-  const matching = randomWord.startsWith(textInput);
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
-
-  const DEFAULT_VOLUME = 0.5;
-  const DEFAULT_PITCH = 1;
-  const DEFAULT_RATE = 0.8;
-  const [volume, setVolume] = useState(DEFAULT_VOLUME);
-  const [pitch, setPitch] = useState(DEFAULT_PITCH);
-  const [rate, setRate] = useState(DEFAULT_RATE);
+  const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
+  const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
+  const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
-  const [dictionaryId, setDictionaryId] = useState("0");
+  const [dictionaryId, setDictionaryId] = useState<string>(DICTIONARY_IDS.ENGLISH_5K);
   const [definition, setDefinition] = useState("");
-
-  console.log(voice?.name);
 
   function getRandomWord() {
     const randomIndex = Math.floor(Math.random() * dictionary.words.length);
@@ -107,10 +121,11 @@ function App() {
     // eslint-disable-next-line no-useless-assignment
     let sentence = "";
 
-    if (dictionaryId === "4") {
-      sentence = "Buchstabiere " + word + "!";
+    // maybe remove, was initially used to add "spell" or "buchstabiere" before word
+    if (dictionaryId === DICTIONARY_IDS.GERMAN_10K) {
+      sentence = "" + word + "!";
     } else {
-      sentence = "Spell " + word + "!";
+      sentence = "" + word + "!";
     }
 
     const utterance = new SpeechSynthesisUtterance(sentence);
@@ -124,8 +139,12 @@ function App() {
     window.speechSynthesis.speak(utterance);
   }
 
+  /**
+   * Extract random entry from currently selected dictionary and update word and definition with its values.
+   * Additionally, change false, correct and streakCounter depending on whether textInput matches the current randomWord.
+   */
   function generateRandomWord() {
-    if (wordclass === "random-word-correct") {
+    if (wordClass === "text-input-correct") {
       const newStreak = streakCounter + 1;
 
       setStreakCounter(newStreak);
@@ -153,18 +172,23 @@ function App() {
     wordToSpeech(newRandomWord.word);
   }
 
-  if (textInput === randomWord) {
-    wordclass = "random-word-correct";
-  } else {
-    wordclass = "random-word-default";
+  /* Import DICTIONARY corresponding to given DICTIONARY_ID */
+  async function handleDictionaryChange(id: string) {
+    setDictionaryId(id);
+
+    const loadDictionary = DICTIONARIES[id as keyof typeof DICTIONARIES];
+
+    if (!loadDictionary) {
+      return;
+    }
+
+    const module = await loadDictionary();
+    setDictionary(module.default);
   }
 
   return (
     <>
       <header className="flex row-right">
-        <div className="ayo">
-          <p></p>
-        </div>
         <div className="flex container row">
           <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
             info
@@ -183,16 +207,16 @@ function App() {
         <div className="main-content">
           <div className="hero flex column less-gap">
             <img src={logo} id="logo" className="logo" alt="anime peace sign" />
-            <h1 className="">Spelling Bee Prototype</h1>
+            <h1 >Spelling Bee</h1>
           </div>
           <div className="flex column container">
-            <p className={wordclass}>{randomWord}</p>
+            <p className={wordClass}>{randomWord}</p>
             <button type="button" className="generator" onClick={() => generateRandomWord()}>
               Generate random word
             </button>
             <input
               ref={inputRef}
-              className={"text-input " + (matching ? "" : "notMatching")}
+              className={"text-input " + (matching ? "matching" : "not-matching")}
               value={textInput}
               onChange={(event) => {
                 const value = event.target.value;
@@ -247,7 +271,7 @@ function App() {
                   id="volume"
                   onChange={(event) => setVolume(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setVolume(DEFAULT_VOLUME)}>
+                <button className="button" onClick={() => setVolume(DEFAULT_SETTINGS.volume)}>
                   reset to default
                 </button>
               </div>
@@ -262,7 +286,7 @@ function App() {
                   id="pitch"
                   onChange={(event) => setPitch(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setPitch(DEFAULT_PITCH)}>
+                <button className="button" onClick={() => setPitch(DEFAULT_SETTINGS.pitch)}>
                   reset to default
                 </button>
               </div>
@@ -277,7 +301,7 @@ function App() {
                   id="rate"
                   onChange={(event) => setRate(Number(event.target.value) / 100)}
                 />
-                <button className="button" onClick={() => setRate(DEFAULT_RATE)}>
+                <button className="button" onClick={() => setRate(DEFAULT_SETTINGS.rate)}>
                   reset to default
                 </button>
               </div>
@@ -306,46 +330,13 @@ function App() {
                 <select
                   id="dictionaries"
                   value={dictionaryId}
-                  onChange={async (event) => {
-                    setDictionaryId(event.target.value);
-                    switch (event.target.value) {
-                      case "0": {
-                        const english5k = await import("./static/english_5k.json");
-                        setDictionary(english5k.default);
-                        break;
-                      }
-
-                      case "1": {
-                        const english10k = await import("./static/english_10k.json");
-                        setDictionary(english10k.default);
-                        break;
-                      }
-
-                      case "2": {
-                        const english25k = await import("./static/english_25k.json");
-                        setDictionary(english25k.default);
-                        break;
-                      }
-
-                      case "3": {
-                        const englishShakespearean = await import("./static/english_shakespearean.json");
-                        setDictionary(englishShakespearean.default);
-                        break;
-                      }
-
-                      case "4": {
-                        const german10k = await import("./static/german_10k.json");
-                        setDictionary(german10k.default);
-                        break;
-                      }
-                    }
-                  }}
+                  onChange={(event) => handleDictionaryChange(event.target.value)}
                 >
-                  <option value="0">English - 5k</option>
-                  <option value="1">English - 10k</option>
-                  <option value="2">English - 25k</option>
-                  <option value="3">English - Shakespearean</option>
-                  <option value="4">German - 10k</option>
+                  <option value={DICTIONARY_IDS.ENGLISH_5K}>English - 5k</option>
+                  <option value={DICTIONARY_IDS.ENGLISH_10K}>English - 10k</option>
+                  <option value={DICTIONARY_IDS.ENGLISH_25K}>English - 25k</option>
+                  <option value={DICTIONARY_IDS.SHAKESPEAREAN}>English - Shakespearean</option>
+                  <option value={DICTIONARY_IDS.GERMAN_10K}>German - 10k</option>
                 </select>
               </div>
             </div>

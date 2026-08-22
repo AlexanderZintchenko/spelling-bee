@@ -14,6 +14,7 @@ header {
 
 .definition-box {
   width: 50%;
+  padding: 1.5em;
 
   @media (max-width: 1024px) {
     p {
@@ -137,8 +138,20 @@ header {
 }
 
 .settings-option label {
-  flex: 0 0 9rem;
+  flex: 0 0 9em;
   text-align: left;
+
+  @media (max-width: 600px) {
+    flex: 0 0 6.5em;
+  }
+}
+
+.settings-option input {
+  flex: 0 0 9em;
+
+  @media (max-width: 600px) {
+    flex: 0 0 4.5em;
+  }
 }
 
 .settings-option select {
@@ -231,18 +244,18 @@ header {
   }
 }
 
-.text-input.notMatching {
+.text-input.not-matching {
   outline-color: var(--color-error);
 }
 
-.random-word-default,
-.random-word-correct {
+.text-input-not-correct,
+.text-input-correct {
   padding: var(--padding-default);
   font-size: var(--font-size-larger);
   font-weight: 500;
 }
 
-.random-word-default {
+.text-input-not-correct {
   color: var(--color-text);
   filter: blur(0.75rem);
 
@@ -251,7 +264,7 @@ header {
   }
 }
 
-.random-word-correct {
+.text-input-correct {
   color: var(--color-success);
 }
 
