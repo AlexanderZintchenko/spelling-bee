@@ -180,7 +180,7 @@ function App() {
             <p>{definition}</p>
           </div>
         </div>
-        <div className="flex column">
+        <div className="main-content">
           <div className="hero flex column less-gap">
             <img src={logo} id="logo" className="logo" alt="anime peace sign" />
             <h1 className="">Spelling Bee Prototype</h1>
@@ -192,7 +192,7 @@ function App() {
             </button>
             <input
               ref={inputRef}
-              className={`textInput ${matching ? "" : "notMatching"}`}
+              className={"text-input " + (matching ? "" : "notMatching")}
               value={textInput}
               onChange={(event) => {
                 const value = event.target.value;
@@ -231,7 +231,7 @@ function App() {
           <div className="overlay" onClick={(event) => event.stopPropagation()}>
             <div className="container settings-header">
               <h2>Settings</h2>
-              <button type="button" className="header-button close" onClick={() => setOpenSettings(false)}>
+              <button type="button" className="close-button" onClick={() => setOpenSettings(false)}>
                 ×
               </button>
             </div>
