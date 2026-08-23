@@ -494,17 +494,17 @@ function App() {
                 <label htmlFor="voices">Voices:</label>
                 <select
                   id="voices"
-                  value={voice?.name ?? ""}
+                  value={voice ? voices.indexOf(voice) : ""}
                   onChange={(event) => {
-                    const selectedVoice = voices.find((v) => v.name === event.target.value);
+                    const selectedVoice = voices[Number(event.target.value)];
 
                     if (selectedVoice) {
                       setVoice(selectedVoice);
                     }
                   }}
                 >
-                  {voices.map((v) => (
-                    <option key={v.name} value={v.name}>
+                  {voices.map((v, index) => (
+                    <option key={index} value={index}>
                       {v.name}
                     </option>
                   ))}
