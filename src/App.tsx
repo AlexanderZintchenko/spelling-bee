@@ -24,6 +24,7 @@ import beehive_70 from "./assets/beehive_70.svg";
 import beehive_80 from "./assets/beehive_80.svg";
 import beehive_90 from "./assets/beehive_90.svg";
 import beehive_100 from "./assets/beehive_100.svg";
+import beehive_110 from "./assets/beehive_110.svg";
 
 const DEFAULT_SETTINGS = {
   volume: 0.5,
@@ -172,7 +173,7 @@ function App() {
   const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
   const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
   const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
-  const beehiveLevel = Math.min(Math.floor(level/10)*10, 100);
+  const beehiveLevel = Math.min(Math.floor(level/10)*10, 110);
 
   const BEEHIVE = {
   0: beehive,
@@ -186,6 +187,7 @@ function App() {
   80: beehive_80,
   90: beehive_90,
   100: beehive_100,
+  110: beehive_110
 };
 
   const currentBeehive = BEEHIVE[beehiveLevel as keyof typeof BEEHIVE];
