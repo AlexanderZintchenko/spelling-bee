@@ -336,7 +336,10 @@ function App() {
                   }}
                 />
               </form>
-              <button type="button" className="repeat-button" onClick={() => wordToSpeech(randomWord)}>
+              <button type="button" className="repeat-button" onClick={() => {
+                wordToSpeech(randomWord);
+                inputRef.current?.focus();
+              }}>
                 <img src={soundSpeaker} alt="" />
               </button>
             </div>
