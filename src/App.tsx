@@ -314,6 +314,9 @@ function App() {
                 <input
                   ref={inputRef}
                   enterKeyHint="enter"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                   className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
                   value={textInput}
                   onChange={(event) => {
