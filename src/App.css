@@ -45,12 +45,36 @@ header {
   width: 50%;
   padding: 1.5em;
   transform: translateY(9.4rem);
+  justify-content: center;
 
   @media (max-width: 1024px) {
-    p {
-      color: transparent;
-    }
+    display: none;
   }
+}
+
+.bar {
+  width: 100%;
+  max-width: 20rem;
+  height: 2rem;
+  border: 2px solid black;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-inline: auto;
+}
+
+.main-bar {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.441);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.main-bar.last-correct {
+  background-color: rgba(0, 128, 0, 0.5);
+}
+
+.main-bar.last-false {
+  background: rgba(255, 0, 0, 0.5);
 }
 
 .feedback {
@@ -64,9 +88,7 @@ header {
   transform: translateY(10rem);
 
   @media (max-width: 1024px) {
-    p {
-      color: transparent;
-    }
+    display: none;
   }
 }
 

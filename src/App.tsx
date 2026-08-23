@@ -146,11 +146,15 @@ function App() {
   const [definition, setDefinition] = useLocalStorage("definition", "");
 
   const [xp, setXp] = useLocalStorage("xp", 0);
-  const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // xp per level: 50 -> 55 -> 60 -> 65...
   //<p>XP to next level: <b>{(50 - (xp % 50)).toFixed(1)}</b></p>
-  const xpToNextLevel = (level * (5 * level + 95)) / 2 - xp;
+  const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // 50 -> 105 -> 165 -> 230 -> 300...
+  const currentLevelXp = ((level - 1) * (5 * (level - 1) + 95)) / 2;
+  const nextLevelXp = (level * (5 * level + 95)) / 2;
+  const xpToNextLevel = nextLevelXp - xp;
+  const progressPercent = ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
   const [feedback, setFeedback] = useState("");
   const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
+  const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
 
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
@@ -213,6 +217,7 @@ function App() {
         const wordXp = calculateXp();
         setXp((current) => current + wordXp);
         setFeedback((previous) => getDifferentFeedback(CORRECT_FEEDBACK, previous));
+        setLastResult("correct");
       }
     } else {
       if (mode === MODES.DEFAULT) {
@@ -231,6 +236,7 @@ function App() {
             setLastFalseWordInXp(randomWord);
           }
         }
+        setLastResult("false");
       }
     }
 
@@ -325,6 +331,15 @@ function App() {
                   Total XP: <b>{xp.toFixed(1)}</b>
                 </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
+                <div className="bar">
+                  <div
+                    className={
+                      "main-bar " +
+                      (lastResult === "correct" ? "last-correct" : lastResult === "false" ? "last-false" : "")
+                    }
+                    style={{ width: progressPercent + "%" }}
+                  ></div>
+                </div>
               </div>
             )}
           </div>
