@@ -41,10 +41,15 @@ header {
   justify-content: flex-start;
 }
 
+.beehive {
+  width: 15rem;
+  height: auto;
+  transform: translateY(40%);
+}
+
 .xp-box {
   width: 50%;
   padding: 1.5em;
-  transform: translateY(9.4rem);
   justify-content: center;
 
   @media (max-width: 1024px) {

@@ -13,6 +13,18 @@ preloadAstolfo.src = astolfo;
 const preloadPersona = new Image();
 preloadPersona.src = persona;
 
+import beehive from "./assets/beehive.svg";
+import beehive_10 from "./assets/beehive_10.svg";
+import beehive_20 from "./assets/beehive_20.svg";
+import beehive_30 from "./assets/beehive_30.svg";
+import beehive_40 from "./assets/beehive_40.svg";
+import beehive_50 from "./assets/beehive_50.svg";
+import beehive_60 from "./assets/beehive_60.svg";
+import beehive_70 from "./assets/beehive_70.svg";
+import beehive_80 from "./assets/beehive_80.svg";
+import beehive_90 from "./assets/beehive_90.svg";
+import beehive_100 from "./assets/beehive_100.svg";
+
 const DEFAULT_SETTINGS = {
   volume: 0.5,
   pitch: 1,
@@ -160,6 +172,23 @@ function App() {
   const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
   const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
   const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
+  const beehiveLevel = Math.min(Math.floor(level/10)*10, 100);
+
+  const BEEHIVE = {
+  0: beehive,
+  10: beehive_10,
+  20: beehive_20,
+  30: beehive_30,
+  40: beehive_40,
+  50: beehive_50,
+  60: beehive_60,
+  70: beehive_70,
+  80: beehive_80,
+  90: beehive_90,
+  100: beehive_100,
+};
+
+  const currentBeehive = BEEHIVE[beehiveLevel as keyof typeof BEEHIVE];
 
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
@@ -336,17 +365,22 @@ function App() {
                   }}
                 />
               </form>
-              <button type="button" className="repeat-button" onClick={() => {
-                wordToSpeech(randomWord);
-                inputRef.current?.focus();
-              }}>
+              <button
+                type="button"
+                className="repeat-button"
+                onClick={() => {
+                  wordToSpeech(randomWord);
+                  inputRef.current?.focus();
+                }}
+              >
                 <img src={soundSpeaker} alt="" />
               </button>
             </div>
           </div>
           <div className="top-content-right">
             {mode === MODES.XP && (
-              <div className="xp-box bottom">
+              <div className="xp-box">
+                <img className="beehive" src={currentBeehive}></img>
                 <p className="level">
                   Level: <b>{level}</b>
                 </p>
