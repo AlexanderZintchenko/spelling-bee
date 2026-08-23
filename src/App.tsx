@@ -305,30 +305,34 @@ function App() {
               <button type="button" className="generator" onClick={() => generateRandomWord()}>
                 Generate random word
               </button>
-              <input
-                ref={inputRef}
-                enterKeyHint="enter"
-                className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
-                value={textInput}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  setTextInput(value);
-                  const lowerCasedValue = value.toLowerCase();
-                  if (lowerCasedValue === "astolfo") {
-                    setLogo(astolfo);
-                  } else if (lowerCasedValue === "persona") {
-                    setLogo(persona);
-                  }
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  generateRandomWord();
                 }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    generateRandomWord();
-                  } else if (event.key === "Control") {
-                    wordToSpeech(randomWord);
-                  }
-                }}
-              />
+              >
+                <input
+                  ref={inputRef}
+                  enterKeyHint="enter"
+                  className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
+                  value={textInput}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setTextInput(value);
+                    const lowerCasedValue = value.toLowerCase();
+                    if (lowerCasedValue === "astolfo") {
+                      setLogo(astolfo);
+                    } else if (lowerCasedValue === "persona") {
+                      setLogo(persona);
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Control") {
+                      wordToSpeech(randomWord);
+                    }
+                  }}
+                />
+              </form>
               <button type="button" className="repeat-button" onClick={() => wordToSpeech(randomWord)}>
                 <img src={soundSpeaker} alt="" />
               </button>
@@ -391,7 +395,6 @@ function App() {
                   Total XP: <b>{xp.toFixed(1)}</b>
                 </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
-                
               </div>
               <p>streak: {xpStreakCounter}</p>
               <p>
