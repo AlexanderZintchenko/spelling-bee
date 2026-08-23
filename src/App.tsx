@@ -39,7 +39,7 @@ const DICTIONARIES = {
 const XP_MODIFIERS = {
   [DICTIONARY_IDS.ENGLISH_5K]: 1,
   [DICTIONARY_IDS.ENGLISH_10K]: 1.25,
-  [DICTIONARY_IDS.ENGLISH_25K]: 1.5,
+  [DICTIONARY_IDS.ENGLISH_25K]: 2.0,
   [DICTIONARY_IDS.SHAKESPEAREAN]: 1.25,
   [DICTIONARY_IDS.GERMAN_10K]: 1,
 } as const;
@@ -390,7 +390,7 @@ function App() {
               >
                 <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner (10 XP)</option>
                 <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (12.5 XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (15 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (20 XP)</option>
                 <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Old English (12.5 XP)</option>
               </select>
             </div>
