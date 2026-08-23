@@ -48,6 +48,18 @@ const MODES = {
 
 type Mode = (typeof MODES)[keyof typeof MODES];
 
+const CORRECT_FEEDBACK = [
+  "Good job!",
+  "Nice!",
+  "Well done!",
+  "Excellent!",
+  "Great work!",
+  "Keep it up!",
+  "Perfect!",
+  "Nice one!",
+];
+
+
 /**
  * Store react state in localStorage so they persist across page reloads.
  * @param key - the localStorage key.
@@ -83,6 +95,11 @@ function initializeVoice(voices: SpeechSynthesisVoice[]) {
       (voice) => voice !== undefined,
     ) ?? voices[0]
   );
+}
+
+function getDifferentFeedback(messages: string[], previous: string) {
+  const available = messages.filter((message) => message !== previous);
+  return available[Math.floor(Math.random() * available.length)];
 }
 
 function App() {
@@ -130,13 +147,22 @@ function App() {
   const [definition, setDefinition] = useState("");
 
   const [xp, setXp] = useLocalStorage("xp", 0);
-  const level = Math.floor(xp / 50) + 1;
+  const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // xp per level: 50 -> 55 -> 60 -> 65...
+  //<p>XP to next level: <b>{(50 - (xp % 50)).toFixed(1)}</b></p>
+  const xpToNextLevel = ((level * (5 * level + 95)) / 2) - xp;
+  const [feedback, setFeedback] = useState("");
+
+  const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
   function calculateXp() {
     const baseXp = 10;
     const xp = Math.round(baseXp * XP_MODIFIERS[dictionaryId]);
 
     return xp;
+  }
+
+  function reduceXp(amount: number) {
+    setXp((currentXp) => Math.max(0, currentXp - amount));
   }
 
   function getRandomWord() {
@@ -172,7 +198,7 @@ function App() {
    * Extract random entry from currently selected dictionary and update word and definition with its values.
    * Additionally, change false, correct and streakCounter depending on whether textInput matches the current randomWord.
    */
-  function generateRandomWord() {
+  function generateRandomWord(xpPenalty = true) {
     if (wordClass === "text-input-correct") {
       if (mode === MODES.DEFAULT) {
         const newStreak = streakCounter + 1;
@@ -186,13 +212,23 @@ function App() {
       } else if (mode === MODES.XP) {
         const wordXp = calculateXp();
         setXp((current) => current + wordXp);
+        setFeedback((previous) => getDifferentFeedback(CORRECT_FEEDBACK, previous));
       }
     } else {
-      setStreakCounter(0);
+      if (mode === MODES.DEFAULT) {
+        setStreakCounter(0);
 
-      if (textInput.length > 0) {
-        setFalseCounter((current) => current + 1);
-        setLastFalseWord(randomWord);
+        if (textInput.length > 0) {
+          setFalseCounter((current) => current + 1);
+          setLastFalseWord(randomWord);
+        }
+      } else if (mode === MODES.XP) {
+        if (xpPenalty) {
+          let wordXp = calculateXp();
+          wordXp = wordXp * 0.3;
+          reduceXp(wordXp);
+          setFeedback("");
+        }
       }
     }
 
@@ -248,13 +284,13 @@ function App() {
               </div>
             </div>
             <div className="flex column container">
-              <p className={wordClass}>{randomWord}</p>
+              <p className={wordClass + " " + modeClass}>{randomWord}</p>
               <button type="button" className="generator" onClick={() => generateRandomWord()}>
                 Generate random word
               </button>
               <input
                 ref={inputRef}
-                className={"text-input " + (matching ? "matching" : "not-matching")}
+                className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
                 value={textInput}
                 onChange={(event) => {
                   const value = event.target.value;
@@ -279,9 +315,10 @@ function App() {
           </div>
           <div className="top-content-right">
             {mode === MODES.XP && (
-              <div>
-                <p>Level: {level}</p>
-                <p>XP to next level: {50 - (xp % 50)}</p>
+              <div className="xp-box">
+                <p className="level">Level: <b>{level}</b></p>
+                <p>Total XP: <b>{xp.toFixed(1)}</b></p>
+                <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
               </div>
             )}
           </div>
@@ -307,7 +344,12 @@ function App() {
                 className="select"
                 id="difficulty"
                 value={dictionaryId}
-                onChange={(event) => handleDictionaryChange(event.target.value as DictionaryId)}
+                onChange={(event) => {
+                  const newDictionaryId = event.target.value as DictionaryId;
+                  handleDictionaryChange(newDictionaryId);
+                  generateRandomWord(false);
+                  reduceXp(2*XP_MODIFIERS[newDictionaryId]);
+                }}
               >
                 <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner</option>
                 <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (1.25XP)</option>
@@ -326,6 +368,7 @@ function App() {
           <option value={MODES.DEFAULT}>Classic Mode</option>
           <option value={MODES.XP}>XP Mode</option>
         </select>
+        <p className="feedback">{feedback}</p>
       </div>
       {openSettings && (
         <div className="overlay-backdrop" onClick={() => setOpenSettings(false)}>

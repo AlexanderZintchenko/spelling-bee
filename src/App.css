@@ -29,11 +29,33 @@ header {
   align-items: center;
 }
 
-.top-content-left,
-.right {
+.top-content-left {
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
+}
+
+.top-content-right {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.xp-box {
+  width: 50%;
+  padding: 1.5em;
+  transform: translateY(9.4rem);
+
+  @media (max-width: 1024px) {
+    p {
+      color: transparent;
+    }
+  }
+}
+
+.feedback {
+  color: green;
+  font-size: var(--font-size-large);
 }
 
 .definition-box {
@@ -294,7 +316,7 @@ header {
   }
 }
 
-.text-input.not-matching {
+.text-input.not-matching.classic-mode {
   outline-color: var(--color-error);
 }
 
@@ -303,6 +325,11 @@ header {
   padding: var(--padding-default);
   font-size: var(--font-size-larger);
   font-weight: 500;
+}
+
+.text-input-correct.xp-mode {
+  color: var(--color-text);
+  filter: blur(0.75rem);
 }
 
 .text-input-not-correct {
@@ -316,6 +343,12 @@ header {
 
 .text-input-correct {
   color: var(--color-success);
+}
+
+.text-input-not-correct.xp-mode {
+  &:hover {
+    filter: blur(0.75rem);
+  }
 }
 
 .repeat-button {
