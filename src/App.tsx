@@ -59,7 +59,6 @@ const CORRECT_FEEDBACK = [
   "Nice one!",
 ];
 
-
 /**
  * Store react state in localStorage so they persist across page reloads.
  * @param key - the localStorage key.
@@ -137,19 +136,19 @@ function App() {
   const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
   const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
   const [logo, setLogo] = useState(penguin);
-  const [mode, setMode] = useState<Mode>(MODES.DEFAULT);
+  const [mode, setMode] = useLocalStorage<Mode>("mode", MODES.DEFAULT);
   const [openSettings, setOpenSettings] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
   const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
   const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
-  const [dictionaryId, setDictionaryId] = useState<DictionaryId>(DICTIONARY_IDS.ENGLISH_5K);
+  const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
   const [definition, setDefinition] = useState("");
 
   const [xp, setXp] = useLocalStorage("xp", 0);
   const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // xp per level: 50 -> 55 -> 60 -> 65...
   //<p>XP to next level: <b>{(50 - (xp % 50)).toFixed(1)}</b></p>
-  const xpToNextLevel = ((level * (5 * level + 95)) / 2) - xp;
+  const xpToNextLevel = (level * (5 * level + 95)) / 2 - xp;
   const [feedback, setFeedback] = useState("");
 
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
@@ -316,8 +315,12 @@ function App() {
           <div className="top-content-right">
             {mode === MODES.XP && (
               <div className="xp-box">
-                <p className="level">Level: <b>{level}</b></p>
-                <p>Total XP: <b>{xp.toFixed(1)}</b></p>
+                <p className="level">
+                  Level: <b>{level}</b>
+                </p>
+                <p>
+                  Total XP: <b>{xp.toFixed(1)}</b>
+                </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
               </div>
             )}
@@ -348,7 +351,7 @@ function App() {
                   const newDictionaryId = event.target.value as DictionaryId;
                   handleDictionaryChange(newDictionaryId);
                   generateRandomWord(false);
-                  reduceXp(2*XP_MODIFIERS[newDictionaryId]);
+                  reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
               >
                 <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner</option>
