@@ -307,6 +307,7 @@ function App() {
               </button>
               <input
                 ref={inputRef}
+                enterKeyHint="enter"
                 className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
                 value={textInput}
                 onChange={(event) => {
@@ -321,6 +322,7 @@ function App() {
                 }}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
+                    event.preventDefault();
                     generateRandomWord();
                   } else if (event.key === "Control") {
                     wordToSpeech(randomWord);
