@@ -40,7 +40,7 @@ const XP_MODIFIERS = {
   [DICTIONARY_IDS.ENGLISH_5K]: 1,
   [DICTIONARY_IDS.ENGLISH_10K]: 1.25,
   [DICTIONARY_IDS.ENGLISH_25K]: 1.5,
-  [DICTIONARY_IDS.SHAKESPEAREAN]: 2,
+  [DICTIONARY_IDS.SHAKESPEAREAN]: 1.25,
   [DICTIONARY_IDS.GERMAN_10K]: 1,
 } as const;
 
@@ -388,10 +388,10 @@ function App() {
                   reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
               >
-                <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner</option>
-                <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (1.25XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (1.5XP)</option>
-                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Hard (2XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner (×1 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (×1.25 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (×1.5 XP)</option>
+                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Old English (×1.25 XP)</option>
               </select>
             </div>
           )}
