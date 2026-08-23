@@ -57,7 +57,6 @@ header {
   @media (max-width: 1024px) {
     margin: 0.4rem;
   }
-  
 }
 
 .bottom-xp-box {
@@ -260,21 +259,26 @@ header {
 }
 
 .settings-option {
+  @media (min-width: 1024px) {
+    display: flex;
+    width: 58%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 0.5rem;
+    color: var(--color-text);
+  }
   display: flex;
-  width: 58%;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1rem;
-  padding: 0.5rem;
-  color: var(--color-text);
+  justify-content: center;
 }
 
 .settings-option label {
   flex: 0 0 9em;
   text-align: left;
 
-  @media (max-width: 600px) {
+  @media (max-width: 1024px) {
     flex: 0 0 6.5em;
+    margin-right: 0.5rem;
   }
 }
 
@@ -355,7 +359,7 @@ header {
   }
 
   @media (max-width: 1024px) {
-    margin-top:0.4rem;
+    margin-top: 0.4rem;
   }
 }
 
@@ -392,8 +396,6 @@ header {
   user-select: none;
   -webkit-user-drag: none;
 }
-
-
 
 .text-input-not-correct {
   color: var(--color-text);
