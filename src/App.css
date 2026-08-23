@@ -167,6 +167,7 @@ header {
 .main-content-container {
   justify-content: flex-start;
   min-height: 90vh;
+  gap: 0.5rem;
 
   @media (max-width: 1024px) {
     gap: 0.5rem;
