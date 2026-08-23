@@ -2,12 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import type { Dictionary } from "./dictionary.types";
 import penguin from "./assets/penguin.webp";
 import astolfo from "./assets/astolfo_bday.webp";
+import persona from "./assets/persona.webp";
 import "./App.css";
 import english5k from "./static/english_5k.json";
 import * as speech from "./utils/speech.ts";
 
-const preload = new Image();
-preload.src = astolfo;
+const preloadAstolfo = new Image();
+preloadAstolfo.src = astolfo;
+const preloadPersona = new Image();
+preloadPersona.src = persona;
 
 const DEFAULT_SETTINGS = {
   volume: 0.5,
@@ -155,6 +158,7 @@ function App() {
   const [feedback, setFeedback] = useState("");
   const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
   const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
+  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
 
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
@@ -218,6 +222,8 @@ function App() {
         setXp((current) => current + wordXp);
         setFeedback((previous) => getDifferentFeedback(CORRECT_FEEDBACK, previous));
         setLastResult("correct");
+        const newStreak = xpStreakCounter + 1;
+        setXpStreakCounter(newStreak);
       }
     } else {
       if (mode === MODES.DEFAULT) {
@@ -228,10 +234,12 @@ function App() {
         }
       } else if (mode === MODES.XP) {
         if (xpPenalty) {
+          setXpStreakCounter(0);
           let wordXp = calculateXp();
           wordXp = wordXp * 0.3;
           reduceXp(wordXp);
           setFeedback("");
+
           if (textInput.length > 0) {
             setLastFalseWordInXp(randomWord);
           }
@@ -306,6 +314,8 @@ function App() {
                   const lowerCasedValue = value.toLowerCase();
                   if (lowerCasedValue === "astolfo") {
                     setLogo(astolfo);
+                  } else if (lowerCasedValue === "persona") {
+                    setLogo(persona);
                   }
                 }}
                 onKeyDown={(event) => {
@@ -361,6 +371,7 @@ function App() {
 
           {mode === MODES.XP && (
             <div className="stats-xp">
+              <p>streak: {xpStreakCounter}</p>
               <p>
                 last false word:
                 <br />
