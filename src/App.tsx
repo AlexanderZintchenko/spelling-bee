@@ -6,6 +6,7 @@ import persona from "./assets/persona.webp";
 import "./App.css";
 import english5k from "./static/english_5k.json";
 import * as speech from "./utils/speech.ts";
+import soundSpeaker from "./assets/sound-speaker.svg";
 
 const preloadAstolfo = new Image();
 preloadAstolfo.src = astolfo;
@@ -327,7 +328,7 @@ function App() {
                 }}
               />
               <button type="button" className="repeat-button" onClick={() => wordToSpeech(randomWord)}>
-                🕪
+                <img src={soundSpeaker} alt="" />
               </button>
             </div>
           </div>
@@ -375,10 +376,6 @@ function App() {
                 <p className="level">
                   Level: <b>{level}</b>
                 </p>
-                <p>
-                  Total XP: <b>{xp.toFixed(1)}</b>
-                </p>
-                <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
                 <div className="bar">
                   <div
                     className={
@@ -388,6 +385,11 @@ function App() {
                     style={{ width: progressPercent + "%" }}
                   ></div>
                 </div>
+                <p>
+                  Total XP: <b>{xp.toFixed(1)}</b>
+                </p>
+                <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
+                
               </div>
               <p>streak: {xpStreakCounter}</p>
               <p>
