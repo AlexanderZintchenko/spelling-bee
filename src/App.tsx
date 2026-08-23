@@ -333,7 +333,7 @@ function App() {
           </div>
           <div className="top-content-right">
             {mode === MODES.XP && (
-              <div className="xp-box">
+              <div className="xp-box bottom">
                 <p className="level">
                   Level: <b>{level}</b>
                 </p>
@@ -371,6 +371,24 @@ function App() {
 
           {mode === MODES.XP && (
             <div className="stats-xp">
+              <div className="bottom-xp-box">
+                <p className="level">
+                  Level: <b>{level}</b>
+                </p>
+                <p>
+                  Total XP: <b>{xp.toFixed(1)}</b>
+                </p>
+                <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
+                <div className="bar">
+                  <div
+                    className={
+                      "main-bar " +
+                      (lastResult === "correct" ? "last-correct" : lastResult === "false" ? "last-false" : "")
+                    }
+                    style={{ width: progressPercent + "%" }}
+                  ></div>
+                </div>
+              </div>
               <p>streak: {xpStreakCounter}</p>
               <p>
                 last false word:

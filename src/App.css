@@ -52,6 +52,22 @@ header {
   }
 }
 
+.bottom-xp-box {
+  display: none;
+  @media (max-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.bottom-xp-box *,
+.stats-xp * {
+  @media (max-width: 1024px) {
+    margin: 0.4rem;
+  }
+  
+}
+
 .bar {
   width: 100%;
   max-width: 20rem;
@@ -67,6 +83,15 @@ header {
   background: rgba(255, 255, 255, 0.441);
   border-radius: 10px;
   transition: width 0.3s ease;
+}
+
+.bottom-xp-box .bar {
+  height: 1.5rem;
+}
+
+.bottom-xp-box .main-bar {
+  height: 100%;
+  margin: 0;
 }
 
 .main-bar.last-correct {
@@ -155,6 +180,12 @@ header {
 
 .container > * {
   margin: 0;
+}
+
+.flex.column.container {
+  @media (max-width: 1024px) {
+    gap: 0.8rem;
+  }
 }
 
 .less-bottom-margin {
