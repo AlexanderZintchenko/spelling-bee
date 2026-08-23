@@ -388,10 +388,10 @@ function App() {
                   reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
               >
-                <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner (×1 XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (×1.25 XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (×1.5 XP)</option>
-                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Old English (×1.25 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner (10 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (12.5 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (15 XP)</option>
+                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Old English (12.5 XP)</option>
               </select>
             </div>
           )}
