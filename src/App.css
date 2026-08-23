@@ -325,6 +325,8 @@ header {
   padding: var(--padding-default);
   font-size: var(--font-size-larger);
   font-weight: 500;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .text-input-correct.xp-mode {

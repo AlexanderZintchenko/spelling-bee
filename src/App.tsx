@@ -143,13 +143,14 @@ function App() {
   const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
   const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
-  const [definition, setDefinition] = useLocalStorage("definition","");
+  const [definition, setDefinition] = useLocalStorage("definition", "");
 
   const [xp, setXp] = useLocalStorage("xp", 0);
   const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // xp per level: 50 -> 55 -> 60 -> 65...
   //<p>XP to next level: <b>{(50 - (xp % 50)).toFixed(1)}</b></p>
   const xpToNextLevel = (level * (5 * level + 95)) / 2 - xp;
   const [feedback, setFeedback] = useState("");
+  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
 
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
@@ -216,7 +217,6 @@ function App() {
     } else {
       if (mode === MODES.DEFAULT) {
         setStreakCounter(0);
-
         if (textInput.length > 0) {
           setFalseCounter((current) => current + 1);
           setLastFalseWord(randomWord);
@@ -227,6 +227,9 @@ function App() {
           wordXp = wordXp * 0.3;
           reduceXp(wordXp);
           setFeedback("");
+          if (textInput.length > 0) {
+            setLastFalseWordInXp(randomWord);
+          }
         }
       }
     }
@@ -343,6 +346,11 @@ function App() {
 
           {mode === MODES.XP && (
             <div className="stats-xp">
+              <p>
+                last false word:
+                <br />
+                {lastFalseWordInXp}
+              </p>
               <select
                 className="select"
                 id="difficulty"
