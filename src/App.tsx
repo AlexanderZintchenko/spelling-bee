@@ -124,7 +124,7 @@ function App() {
 
   // randomWord, textInput and comparisons
   const inputRef = useRef<HTMLInputElement>(null);
-  const [randomWord, setRandomWord] = useState("start");
+  const [randomWord, setRandomWord] = useLocalStorage("randomWord", "start");
   const [textInput, setTextInput] = useState("");
   const isCorrect = textInput.toLowerCase() === randomWord.toLowerCase();
   const wordClass = isCorrect ? "text-input-correct" : "text-input-not-correct";
@@ -143,7 +143,7 @@ function App() {
   const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
   const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
-  const [definition, setDefinition] = useState("");
+  const [definition, setDefinition] = useLocalStorage("definition","");
 
   const [xp, setXp] = useLocalStorage("xp", 0);
   const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // xp per level: 50 -> 55 -> 60 -> 65...
