@@ -494,9 +494,9 @@ function App() {
                 className="select"
                 id="difficulty"
                 value={dictionaryId}
-                onChange={(event) => {
+                onChange={async (event) => {
                   const newDictionaryId = event.target.value as DictionaryId;
-                  handleDictionaryChange(newDictionaryId); // FIXME: async function - generateRandomWord can potentially still use old dictionary
+                  await handleDictionaryChange(newDictionaryId);
                   generateRandomWord(false);
                   reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
