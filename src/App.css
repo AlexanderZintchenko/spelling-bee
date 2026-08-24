@@ -393,8 +393,8 @@ header {
   outline-color: var(--color-error);
 }
 
-.text-input-not-correct,
-.text-input-correct {
+.input-not-correct,
+.input-correct {
   padding: var(--padding-default);
   font-size: var(--font-size-larger);
   font-weight: 500;
@@ -402,7 +402,7 @@ header {
   -webkit-user-drag: none;
 }
 
-.text-input-not-correct {
+.input-not-correct {
   color: var(--color-text);
   filter: blur(0.75rem);
 
@@ -411,11 +411,11 @@ header {
   }
 }
 
-.text-input-correct {
+.input-correct {
   color: var(--color-success);
 }
 
-.text-input-correct.xp-mode {
+.input-correct.xp-mode {
   color: var(--color-text);
   filter: blur(0.75rem);
   @media (max-width: 1024px) {
@@ -423,7 +423,7 @@ header {
   }
 }
 
-.text-input-not-correct.xp-mode {
+.input-not-correct.xp-mode {
   &:hover {
     filter: blur(0.75rem);
   }

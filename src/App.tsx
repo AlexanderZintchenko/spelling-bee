@@ -1,18 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import type { Dictionary } from "./dictionary.types";
+
+// logos
 import penguin from "./assets/penguin.webp";
 import astolfo from "./assets/astolfo_bday.webp";
 import persona from "./assets/persona.webp";
-import "./App.css";
-import english5k from "./static/english_5k.json";
-import * as speech from "./utils/speech.ts";
-import soundSpeaker from "./assets/sound-speaker.svg";
 
-const preloadAstolfo = new Image();
-preloadAstolfo.src = astolfo;
-const preloadPersona = new Image();
-preloadPersona.src = persona;
-
+// beehive images
 import beehive from "./assets/beehive.svg";
 import beehive_10 from "./assets/beehive_10.svg";
 import beehive_20 from "./assets/beehive_20.svg";
@@ -25,6 +18,15 @@ import beehive_80 from "./assets/beehive_80.svg";
 import beehive_90 from "./assets/beehive_90.svg";
 import beehive_100 from "./assets/beehive_100.svg";
 import beehive_110 from "./assets/beehive_110.svg";
+
+import soundSpeaker from "./assets/sound-speaker.svg";
+
+import english5k from "./static/english_5k.json";
+
+import type { Dictionary } from "./dictionary.types";
+import * as speech from "./utils/speech.ts";
+
+import "./App.css";
 
 const DEFAULT_SETTINGS = {
   volume: 0.5,
@@ -40,8 +42,6 @@ const DICTIONARY_IDS = {
   GERMAN_10K: "4",
 } as const;
 
-type DictionaryId = (typeof DICTIONARY_IDS)[keyof typeof DICTIONARY_IDS];
-
 const DICTIONARIES = {
   "0": () => import("./static/english_5k.json"),
   "1": () => import("./static/english_10k.json"),
@@ -50,20 +50,10 @@ const DICTIONARIES = {
   "4": () => import("./static/german_10k.json"),
 };
 
-const XP_MODIFIERS = {
-  [DICTIONARY_IDS.ENGLISH_5K]: 1,
-  [DICTIONARY_IDS.ENGLISH_10K]: 1.25,
-  [DICTIONARY_IDS.ENGLISH_25K]: 2.0,
-  [DICTIONARY_IDS.SHAKESPEAREAN]: 1.25,
-  [DICTIONARY_IDS.GERMAN_10K]: 1,
-} as const;
-
 const MODES = {
   DEFAULT: "classic",
   XP: "XP",
 } as const;
-
-type Mode = (typeof MODES)[keyof typeof MODES];
 
 const CORRECT_FEEDBACK = [
   "Good job!",
@@ -75,6 +65,40 @@ const CORRECT_FEEDBACK = [
   "Perfect!",
   "Nice one!",
 ];
+
+const XP_MODIFIERS = {
+  [DICTIONARY_IDS.ENGLISH_5K]: 1,
+  [DICTIONARY_IDS.ENGLISH_10K]: 1.25,
+  [DICTIONARY_IDS.ENGLISH_25K]: 2.0,
+  [DICTIONARY_IDS.SHAKESPEAREAN]: 1.25,
+  [DICTIONARY_IDS.GERMAN_10K]: 1,
+} as const;
+
+const BASE_XP = 10;
+
+const BEEHIVE = {
+  0: beehive,
+  10: beehive_10,
+  20: beehive_20,
+  30: beehive_30,
+  40: beehive_40,
+  50: beehive_50,
+  60: beehive_60,
+  70: beehive_70,
+  80: beehive_80,
+  90: beehive_90,
+  100: beehive_100,
+  110: beehive_110,
+};
+
+const preloadAstolfo = new Image();
+preloadAstolfo.src = astolfo;
+const preloadPersona = new Image();
+preloadPersona.src = persona;
+
+type DictionaryId = (typeof DICTIONARY_IDS)[keyof typeof DICTIONARY_IDS];
+
+type Mode = (typeof MODES)[keyof typeof MODES];
 
 /**
  * Store react state in localStorage so they persist across page reloads.
@@ -100,12 +124,11 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 }
 
 /**
- * Selects first available voice from preferred voices and falls back to first available voice if none is found.
+ * Select first available voice from preferred voices and falls back to first available voice if none is found.
  * @param voices - available voices from browsers SpeechSynthesis API.
  * @returns the first matching voice from preferred voices or the the first available voice.
  */
 function initializeVoice(voices: SpeechSynthesisVoice[]) {
-  console.log(voices);
   return (
     speech.PREFERRED_VOICES.map((name) => voices.find((voice) => voice.name === name)).find(
       (voice) => voice !== undefined,
@@ -113,16 +136,82 @@ function initializeVoice(voices: SpeechSynthesisVoice[]) {
   );
 }
 
+/**
+ * Return random feedback different from last used one.
+ * @param messages
+ * @param previous
+ * @returns
+ */
 function getDifferentFeedback(messages: string[], previous: string) {
   const available = messages.filter((message) => message !== previous);
   return available[Math.floor(Math.random() * available.length)];
 }
 
+/**
+ * Calculate xp reward depending on the chosen dictionary.
+ * @param dictionaryId
+ * @returns
+ */
+function calculateXp(dictionaryId: DictionaryId) {
+  return Math.round(BASE_XP * XP_MODIFIERS[dictionaryId]);
+}
+
+/**
+ * Select random entry from given dictionary
+ * @param dictionary
+ * @returns
+ */
+function getRandomWord(dictionary: Dictionary) {
+  const randomIndex = Math.floor(Math.random() * dictionary.words.length);
+  return dictionary.words[randomIndex];
+}
+
+// TODO: implement for cleaner generateWord
+// function evaluateAnswer(textInput: string, randomWord: string) {}
+// function updateGameState(result: boolean)
+
+// function submitAnswer()
+
 function App() {
+  // speech
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [voice, setVoice] = useState<SpeechSynthesisVoice | undefined>();
 
-  /* Initialize the voice once SpeechSynthesis API has loaded its available voices */
+  // general game states
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [randomWord, setRandomWord] = useLocalStorage("randomWord", "start");
+  const [textInput, setTextInput] = useState("");
+  const [definition, setDefinition] = useLocalStorage("definition", "");
+  const [feedback, setFeedback] = useState("");
+
+  // classic mode
+  const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
+  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
+  const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
+  const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
+  const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
+
+  // xp mode
+  const [xp, setXp] = useLocalStorage("xp", 0);
+  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
+  const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
+  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
+
+  // UI
+  const [logo, setLogo] = useState(penguin);
+  const [openSettings, setOpenSettings] = useState(false);
+
+  // configuration
+  const [mode, setMode] = useLocalStorage<Mode>("mode", MODES.DEFAULT);
+  const [dictionary, setDictionary] = useState<Dictionary>(english5k);
+  const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
+
+  // settings
+  const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
+  const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
+  const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
+
+  /* Initialize the voice with the preferred option once SpeechSynthesis API has loaded its available voices */
   useEffect(() => {
     const updateVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
@@ -139,94 +228,44 @@ function App() {
     };
   }, []);
 
-  // randomWord, textInput and comparisons
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [randomWord, setRandomWord] = useLocalStorage("randomWord", "start");
-  const [textInput, setTextInput] = useState("");
-  const isCorrect = textInput.toLowerCase() === randomWord.toLowerCase();
-  const wordClass = isCorrect ? "text-input-correct" : "text-input-not-correct";
-  const matching = randomWord.toLowerCase().startsWith(textInput.toLowerCase());
+  // derived variables
+  const matching = randomWord.toLowerCase().startsWith(textInput.toLowerCase()); // typed input matching so far
+  const isCorrect = textInput.toLowerCase() === randomWord.toLowerCase(); // fully matching
+  const wordClass = isCorrect ? "input-correct" : "input-not-correct";
+  const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
-  const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
-  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
-  const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
-  const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
-  const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
-  const [logo, setLogo] = useState(penguin);
-  const [mode, setMode] = useLocalStorage<Mode>("mode", MODES.DEFAULT);
-  const [openSettings, setOpenSettings] = useState(false);
-  const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
-  const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
-  const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
-  const [dictionary, setDictionary] = useState<Dictionary>(english5k);
-  const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
-  const [definition, setDefinition] = useLocalStorage("definition", "");
-
-  const [xp, setXp] = useLocalStorage("xp", 0);
-  //<p>XP to next level: <b>{(50 - (xp % 50)).toFixed(1)}</b></p>
   const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // 50 -> 105 -> 165 -> 230 -> 300...
   const currentLevelXp = ((level - 1) * (5 * (level - 1) + 95)) / 2;
   const nextLevelXp = (level * (5 * level + 95)) / 2;
   const xpToNextLevel = nextLevelXp - xp;
   const progressPercent = ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
-  const [feedback, setFeedback] = useState("");
-  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
-  const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
-  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
-  const beehiveLevel = Math.min(Math.floor(level/10)*10, 110);
 
-  const BEEHIVE = {
-  0: beehive,
-  10: beehive_10,
-  20: beehive_20,
-  30: beehive_30,
-  40: beehive_40,
-  50: beehive_50,
-  60: beehive_60,
-  70: beehive_70,
-  80: beehive_80,
-  90: beehive_90,
-  100: beehive_100,
-  110: beehive_110
-};
-
+  const beehiveLevel = Math.min(Math.floor(level / 10) * 10, 110);
   const currentBeehive = BEEHIVE[beehiveLevel as keyof typeof BEEHIVE];
 
-  const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
-  function calculateXp() {
-    const baseXp = 10;
-    const xp = Math.round(baseXp * XP_MODIFIERS[dictionaryId]);
-
-    return xp;
-  }
-
+  /**
+   * Reduce xp by amount. Set to zero if result would be negative.
+   * @param amount
+   */
   function reduceXp(amount: number) {
     setXp((currentXp) => Math.max(0, currentXp - amount));
   }
 
-  function getRandomWord() {
-    const randomIndex = Math.floor(Math.random() * dictionary.words.length);
-    return dictionary.words[randomIndex];
-  }
-
+  /**
+   * Speak the given word using the SpeechSynthesis API.
+   * @param word 
+   */
   function wordToSpeech(word: string) {
     window.speechSynthesis.cancel();
 
-    // eslint-disable-next-line no-useless-assignment
-    let sentence = "";
-
-    // maybe remove, was initially used to add "spell" or "buchstabiere" before word
-    if (dictionaryId === DICTIONARY_IDS.GERMAN_10K) {
-      sentence = "" + word + "!";
-    } else {
-      sentence = "" + word + "!";
-    }
-
+    const sentence = word + ".";
     const utterance = new SpeechSynthesisUtterance(sentence);
+
     utterance.volume = volume;
     utterance.pitch = pitch;
     utterance.rate = rate;
+
     if (voice != null) {
       utterance.voice = voice;
     }
@@ -239,7 +278,7 @@ function App() {
    * Additionally, change false, correct and streakCounter depending on whether textInput matches the current randomWord.
    */
   function generateRandomWord(xpPenalty = true) {
-    if (wordClass === "text-input-correct") {
+    if (wordClass === "input-correct") {
       if (mode === MODES.DEFAULT) {
         const newStreak = streakCounter + 1;
 
@@ -250,7 +289,7 @@ function App() {
           setBestStreakCounter(newStreak);
         }
       } else if (mode === MODES.XP) {
-        const wordXp = calculateXp();
+        const wordXp = calculateXp(dictionaryId);
         setXp((current) => current + wordXp);
         setFeedback((previous) => getDifferentFeedback(CORRECT_FEEDBACK, previous));
         setLastResult("correct");
@@ -267,7 +306,7 @@ function App() {
       } else if (mode === MODES.XP) {
         if (xpPenalty) {
           setXpStreakCounter(0);
-          let wordXp = calculateXp();
+          let wordXp = calculateXp(dictionaryId);
           wordXp = wordXp * 0.3;
           reduceXp(wordXp);
           setFeedback("");
@@ -280,7 +319,7 @@ function App() {
       }
     }
 
-    const newRandomWord = getRandomWord();
+    const newRandomWord = getRandomWord(dictionary);
     setRandomWord(newRandomWord.word);
     setDefinition(newRandomWord.definition);
 
@@ -290,7 +329,12 @@ function App() {
     wordToSpeech(newRandomWord.word);
   }
 
-  /* Import DICTIONARY corresponding to given DICTIONARY_ID */
+  
+  /**
+   * Import dictionary corresponding to given id
+   * @param id 
+   * @returns 
+   */
   async function handleDictionaryChange(id: DictionaryId) {
     setDictionaryId(id);
 
@@ -351,12 +395,14 @@ function App() {
                   className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
                   value={textInput}
                   onChange={(event) => {
-                    const value = event.target.value;
-                    setTextInput(value);
-                    const lowerCasedValue = value.toLowerCase();
-                    if (lowerCasedValue === "astolfo") {
+                    const input = event.target.value;
+                    setTextInput(input);
+
+                    const lowerCaseInput = input.toLowerCase();
+
+                    if (lowerCaseInput === "astolfo") {
                       setLogo(astolfo);
-                    } else if (lowerCasedValue === "persona") {
+                    } else if (lowerCaseInput === "persona") {
                       setLogo(persona);
                     }
                   }}
@@ -450,7 +496,7 @@ function App() {
                 value={dictionaryId}
                 onChange={(event) => {
                   const newDictionaryId = event.target.value as DictionaryId;
-                  handleDictionaryChange(newDictionaryId);
+                  handleDictionaryChange(newDictionaryId); // FIXME: async function - generateRandomWord can potentially still use old dictionary
                   generateRandomWord(false);
                   reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
