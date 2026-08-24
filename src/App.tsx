@@ -130,9 +130,9 @@ function useLocalStorage<T>(key: string, initialValue: T) {
  */
 function initializeVoice(voices: SpeechSynthesisVoice[]) {
   return (
-    speech.PREFERRED_VOICES.map((name) => voices.find((voice) => voice.name === name)).find(
-      (voice) => voice !== undefined,
-    ) ?? voices[0]
+    speech.PREFERRED_VOICES.map((name) =>
+      voices.find((voice) => voice.name === name),
+    ).find((voice) => voice !== undefined) ?? voices[0]
   );
 }
 
@@ -186,16 +186,31 @@ function App() {
 
   // classic mode
   const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
-  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage("bestStreakCounter", 0);
-  const [correctCounter, setCorrectCounter] = useLocalStorage("correctCounter", 0);
+  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage(
+    "bestStreakCounter",
+    0,
+  );
+  const [correctCounter, setCorrectCounter] = useLocalStorage(
+    "correctCounter",
+    0,
+  );
   const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
-  const [lastFalseWord, setLastFalseWord] = useLocalStorage("lastFalseWord", "-");
+  const [lastFalseWord, setLastFalseWord] = useLocalStorage(
+    "lastFalseWord",
+    "-",
+  );
 
   // xp mode
   const [xp, setXp] = useLocalStorage("xp", 0);
-  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage("lastFalseWordInXp", "-");
+  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage(
+    "lastFalseWordInXp",
+    "-",
+  );
   const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
-  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage("xpStreakStreakCounter", 0);
+  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage(
+    "xpStreakStreakCounter",
+    0,
+  );
 
   // UI
   const [logo, setLogo] = useState(penguin);
@@ -204,7 +219,10 @@ function App() {
   // configuration
   const [mode, setMode] = useLocalStorage<Mode>("mode", MODES.DEFAULT);
   const [dictionary, setDictionary] = useState<Dictionary>(english5k);
-  const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>("dictionaryId", DICTIONARY_IDS.ENGLISH_5K);
+  const [dictionaryId, setDictionaryId] = useLocalStorage<DictionaryId>(
+    "dictionaryId",
+    DICTIONARY_IDS.ENGLISH_5K,
+  );
 
   // settings
   const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
@@ -238,11 +256,11 @@ function App() {
   const currentLevelXp = ((level - 1) * (5 * (level - 1) + 95)) / 2;
   const nextLevelXp = (level * (5 * level + 95)) / 2;
   const xpToNextLevel = nextLevelXp - xp;
-  const progressPercent = ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
+  const progressPercent =
+    ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
 
   const beehiveLevel = Math.min(Math.floor(level / 10) * 10, 110);
   const currentBeehive = BEEHIVE[beehiveLevel as keyof typeof BEEHIVE];
-
 
   /**
    * Reduce xp by amount. Set to zero if result would be negative.
@@ -254,7 +272,7 @@ function App() {
 
   /**
    * Speak the given word using the SpeechSynthesis API.
-   * @param word 
+   * @param word
    */
   function wordToSpeech(word: string) {
     window.speechSynthesis.cancel();
@@ -291,7 +309,9 @@ function App() {
       } else if (mode === MODES.XP) {
         const wordXp = calculateXp(dictionaryId);
         setXp((current) => current + wordXp);
-        setFeedback((previous) => getDifferentFeedback(CORRECT_FEEDBACK, previous));
+        setFeedback((previous) =>
+          getDifferentFeedback(CORRECT_FEEDBACK, previous),
+        );
         setLastResult("correct");
         const newStreak = xpStreakCounter + 1;
         setXpStreakCounter(newStreak);
@@ -329,11 +349,10 @@ function App() {
     wordToSpeech(newRandomWord.word);
   }
 
-  
   /**
    * Import dictionary corresponding to given id
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   async function handleDictionaryChange(id: DictionaryId) {
     setDictionaryId(id);
@@ -352,10 +371,18 @@ function App() {
     <>
       <header className="flex row-right">
         <div className="flex container row">
-          <button type="button" className="header-button" onClick={() => wordToSpeech(randomWord)}>
+          <button
+            type="button"
+            className="header-button"
+            onClick={() => wordToSpeech(randomWord)}
+          >
             info
           </button>
-          <button type="button" className="header-button" onClick={() => setOpenSettings(!openSettings)}>
+          <button
+            type="button"
+            className="header-button"
+            onClick={() => setOpenSettings(!openSettings)}
+          >
             settings
           </button>
         </div>
@@ -369,7 +396,12 @@ function App() {
           </div>
           <div className="top-content-middle">
             <div className="hero flex column no-gap">
-              <img src={logo} id="logo" className="logo" alt="anime peace sign" />
+              <img
+                src={logo}
+                id="logo"
+                className="logo"
+                alt="anime peace sign"
+              />
               <div className="main-heading-container">
                 <h1 className="main-heading">Spelling Bee</h1>
                 <img className="heading-bee" src={"bee.svg"} />
@@ -377,7 +409,11 @@ function App() {
             </div>
             <div className="flex column container">
               <p className={wordClass + " " + modeClass}>{randomWord}</p>
-              <button type="button" className="generator" onClick={() => generateRandomWord()}>
+              <button
+                type="button"
+                className="generator"
+                onClick={() => generateRandomWord()}
+              >
                 Generate random word
               </button>
               <form
@@ -392,7 +428,12 @@ function App() {
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
-                  className={"text-input " + (matching ? "matching" : "not-matching") + " " + modeClass}
+                  className={
+                    "text-input " +
+                    (matching ? "matching" : "not-matching") +
+                    " " +
+                    modeClass
+                  }
                   value={textInput}
                   onChange={(event) => {
                     const input = event.target.value;
@@ -440,7 +481,11 @@ function App() {
                   <div
                     className={
                       "main-bar " +
-                      (lastResult === "correct" ? "last-correct" : lastResult === "false" ? "last-false" : "")
+                      (lastResult === "correct"
+                        ? "last-correct"
+                        : lastResult === "false"
+                          ? "last-false"
+                          : "")
                     }
                     style={{ width: progressPercent + "%" }}
                   ></div>
@@ -474,7 +519,11 @@ function App() {
                   <div
                     className={
                       "main-bar " +
-                      (lastResult === "correct" ? "last-correct" : lastResult === "false" ? "last-false" : "")
+                      (lastResult === "correct"
+                        ? "last-correct"
+                        : lastResult === "false"
+                          ? "last-false"
+                          : "")
                     }
                     style={{ width: progressPercent + "%" }}
                   ></div>
@@ -501,10 +550,18 @@ function App() {
                   reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
                 }}
               >
-                <option value={DICTIONARY_IDS.ENGLISH_5K}>Beginner (10 XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_10K}>Medium (12.5 XP)</option>
-                <option value={DICTIONARY_IDS.ENGLISH_25K}>Advanced (20 XP)</option>
-                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>Old English (12.5 XP)</option>
+                <option value={DICTIONARY_IDS.ENGLISH_5K}>
+                  Beginner (10 XP)
+                </option>
+                <option value={DICTIONARY_IDS.ENGLISH_10K}>
+                  Medium (12.5 XP)
+                </option>
+                <option value={DICTIONARY_IDS.ENGLISH_25K}>
+                  Advanced (20 XP)
+                </option>
+                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>
+                  Old English (12.5 XP)
+                </option>
               </select>
             </div>
           )}
@@ -521,11 +578,18 @@ function App() {
         <p className="feedback">{feedback}</p>
       </div>
       {openSettings && (
-        <div className="overlay-backdrop" onClick={() => setOpenSettings(false)}>
+        <div
+          className="overlay-backdrop"
+          onClick={() => setOpenSettings(false)}
+        >
           <div className="overlay" onClick={(event) => event.stopPropagation()}>
             <div className="container settings-header">
               <h2>Settings</h2>
-              <button type="button" className="close-button" onClick={() => setOpenSettings(false)}>
+              <button
+                type="button"
+                className="close-button"
+                onClick={() => setOpenSettings(false)}
+              >
                 ×
               </button>
             </div>
@@ -539,9 +603,14 @@ function App() {
                   value={volume * 100}
                   className="slider"
                   id="volume"
-                  onChange={(event) => setVolume(Number(event.target.value) / 100)}
+                  onChange={(event) =>
+                    setVolume(Number(event.target.value) / 100)
+                  }
                 />
-                <button className="button" onClick={() => setVolume(DEFAULT_SETTINGS.volume)}>
+                <button
+                  className="button"
+                  onClick={() => setVolume(DEFAULT_SETTINGS.volume)}
+                >
                   reset to default
                 </button>
               </div>
@@ -554,9 +623,14 @@ function App() {
                   value={pitch * 100}
                   className="slider"
                   id="pitch"
-                  onChange={(event) => setPitch(Number(event.target.value) / 100)}
+                  onChange={(event) =>
+                    setPitch(Number(event.target.value) / 100)
+                  }
                 />
-                <button className="button" onClick={() => setPitch(DEFAULT_SETTINGS.pitch)}>
+                <button
+                  className="button"
+                  onClick={() => setPitch(DEFAULT_SETTINGS.pitch)}
+                >
                   reset to default
                 </button>
               </div>
@@ -569,9 +643,14 @@ function App() {
                   value={rate * 100}
                   className="slider"
                   id="rate"
-                  onChange={(event) => setRate(Number(event.target.value) / 100)}
+                  onChange={(event) =>
+                    setRate(Number(event.target.value) / 100)
+                  }
                 />
-                <button className="button" onClick={() => setRate(DEFAULT_SETTINGS.rate)}>
+                <button
+                  className="button"
+                  onClick={() => setRate(DEFAULT_SETTINGS.rate)}
+                >
                   reset to default
                 </button>
               </div>
@@ -600,13 +679,25 @@ function App() {
                 <select
                   id="dictionaries"
                   value={dictionaryId}
-                  onChange={(event) => handleDictionaryChange(event.target.value as DictionaryId)}
+                  onChange={(event) =>
+                    handleDictionaryChange(event.target.value as DictionaryId)
+                  }
                 >
-                  <option value={DICTIONARY_IDS.ENGLISH_5K}>English - 5k</option>
-                  <option value={DICTIONARY_IDS.ENGLISH_10K}>English - 10k</option>
-                  <option value={DICTIONARY_IDS.ENGLISH_25K}>English - 25k</option>
-                  <option value={DICTIONARY_IDS.SHAKESPEAREAN}>English - Shakespearean</option>
-                  <option value={DICTIONARY_IDS.GERMAN_10K}>German - 10k</option>
+                  <option value={DICTIONARY_IDS.ENGLISH_5K}>
+                    English - 5k
+                  </option>
+                  <option value={DICTIONARY_IDS.ENGLISH_10K}>
+                    English - 10k
+                  </option>
+                  <option value={DICTIONARY_IDS.ENGLISH_25K}>
+                    English - 25k
+                  </option>
+                  <option value={DICTIONARY_IDS.SHAKESPEAREAN}>
+                    English - Shakespearean
+                  </option>
+                  <option value={DICTIONARY_IDS.GERMAN_10K}>
+                    German - 10k
+                  </option>
                 </select>
               </div>
             </div>
