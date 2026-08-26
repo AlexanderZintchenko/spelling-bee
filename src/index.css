@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
+/* global css */
 :root {
   /* palette for trying out different themes more easily */
   --palette-1: #8ea48a;
@@ -14,7 +15,7 @@
   --color-text: rgb(49, 57, 62);
   --color-text-muted: #5f6769;
 
-  --color-border: #var(var(--palette-4));
+  --color-border: var(--palette-4);
 
   --color-success: #1d5234;
   --color-error: #ca4754;
@@ -27,24 +28,34 @@
   --font-size-base: 1.1rem;
   --font-size-large: calc(var(--font-size-base) * 1.25);
   --font-size-larger: calc(var(--font-size-base) * 1.8);
-  --line-height-base: 100%;
+  --line-height-base: normal;
 
   --radius: 15px;
   --radius-input: 20px;
 
   --padding-default: 0.5em;
 
+  --shadow-raised:
+    -1px -1px 2px #ffffff17, 3px 3px 2px rgba(94, 104, 121, 0.803);
+  --shadow-inset:
+    inset -3px -3px 7px #ffffff38, inset 3px 3px 7px rgba(94, 104, 121, 0.803);
+  --color-outline: #000;
+
+  /* vertical spacing between the rows of the game layout */
+  --layout-gap: 1.2rem;
+
   @media (max-width: 1024px) {
     --font-size-base: 0.9rem;
   }
 }
 
-#root {
-  text-align: center;
-  min-height: 100svh;
-  display: flex;
+/* width and height also include padding */
+* {
+  box-sizing: border-box;
+}
 
-  flex-direction: column;
+
+#root {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   font-family: var(--font-family);
@@ -52,7 +63,6 @@
   color-scheme: light;
   color: var(--color-text);
   background: var(--color-background);
-  line-height: normal;
 }
 
 body {

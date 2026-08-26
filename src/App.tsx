@@ -136,12 +136,6 @@ function getRandomWordAndDefinition(dictionary: Dictionary) {
   return dictionary.words[randomIndex];
 }
 
-// TODO: implement for cleaner generateWord
-// function evaluateAnswer(textInput: string, randomWord: string) {}
-// function updateGameState(result: boolean)
-
-// function submitAnswer()
-
 /**
  * Returns whether the guess matches the answer. (case-insensitive)
  * @param guess - the player's input
@@ -198,7 +192,7 @@ function App() {
   const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
   const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
 
-  /* Migrate old stats from localStorage */
+  /* migrate old stats from localStorage */
   useEffect(() => {
     const { mergedClassicStats, mergedXpStats } = migrateOldStats(
       classicStats,
@@ -208,7 +202,7 @@ function App() {
     setXpStats(mergedXpStats);
   }, []);
 
-  /* Initialize the voice with the preferred option once SpeechSynthesis API has loaded its available voices */
+  /* initialize the voice with the preferred option once SpeechSynthesis API has loaded its available voices */
   useEffect(() => {
     const updateVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
@@ -228,7 +222,7 @@ function App() {
   // derived variables
   const matching = randomWord.toLowerCase().startsWith(textInput.toLowerCase()); // typed input matching so far
   const isCorrect = textInput.toLowerCase() === randomWord.toLowerCase(); // fully matching
-  const wordClass = isCorrect ? "input-correct" : "input-not-correct";
+  const targetWordClass = isCorrect ? "target-word is-correct" : "target-word";
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
   const level = Math.floor((Math.sqrt(9025 + 40 * xpStats.xp) - 95) / 10) + 1; // 50 -> 105 -> 165 -> 230 -> 300...
@@ -390,8 +384,8 @@ function App() {
 
   return (
     <>
-      <header className="flex row-right">
-        <div className="flex container row">
+      <header className="app-header">
+        <div className="header-buttons">
           <button
             type="button"
             className="header-button"
@@ -408,88 +402,189 @@ function App() {
           </button>
         </div>
       </header>
-      <div className="flex column main-content-container">
-        <div className="top-content">
-          <div className="top-content-left">
+      <div className="main-content">
+        <div className="game-layout">
+          <div className="definition-column">
             <div className="definition-box">
               <p>{definition}</p>
             </div>
           </div>
-          <div className="top-content-middle">
-            <div className="hero flex column no-gap">
-              <img
-                src={logo}
-                id="logo"
-                className="logo"
-                alt="anime peace sign"
-              />
-              <div className="main-heading-container">
-                <h1 className="main-heading">Spelling Bee</h1>
-                <img className="heading-bee" src={"bee.svg"} />
+          <div className="center-column">
+            <div className="game-column">
+              <div className="hero">
+                <img src={logo} className="logo" alt="anime peace sign" />
+                <div className="main-heading-container">
+                  <h1 className="main-heading">Spelling Bee</h1>
+                  <img className="heading-bee" src={"bee.svg"} />
+                </div>
+              </div>
+              <div className="word-panel">
+                <p className={targetWordClass + " " + modeClass}>
+                  {randomWord}
+                </p>
+                <button
+                  type="button"
+                  className="generate-button"
+                  onClick={() => submitAnswer(textInput, randomWord, mode)}
+                >
+                  Generate random word
+                </button>
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    submitAnswer(textInput, randomWord, mode);
+                  }}
+                >
+                  <input
+                    ref={inputRef}
+                    enterKeyHint="enter"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className={
+                      "text-input " +
+                      (matching ? "matching" : "not-matching") +
+                      " " +
+                      modeClass
+                    }
+                    value={textInput}
+                    onChange={(event) => {
+                      const input = event.target.value;
+                      setTextInput(input);
+
+                      const lowerCaseInput = input.toLowerCase();
+
+                      if (lowerCaseInput === "astolfo") {
+                        setLogo(astolfo);
+                      } else if (lowerCaseInput === "persona") {
+                        setLogo(persona);
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Control") {
+                        wordToSpeech(randomWord);
+                      }
+                    }}
+                  />
+                </form>
+                <button
+                  type="button"
+                  className="repeat-button"
+                  onClick={() => {
+                    wordToSpeech(randomWord);
+                    inputRef.current?.focus();
+                  }}
+                >
+                  <img src={soundSpeaker} alt="" />
+                </button>
               </div>
             </div>
-            <div className="flex column container">
-              <p className={wordClass + " " + modeClass}>{randomWord}</p>
-              <button
-                type="button"
-                className="generator"
-                onClick={() => submitAnswer(textInput, randomWord, mode)}
-              >
-                Generate random word
-              </button>
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  submitAnswer(textInput, randomWord, mode);
-                }}
-              >
-                <input
-                  ref={inputRef}
-                  enterKeyHint="enter"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  className={
-                    "text-input " +
-                    (matching ? "matching" : "not-matching") +
-                    " " +
-                    modeClass
-                  }
-                  value={textInput}
-                  onChange={(event) => {
-                    const input = event.target.value;
-                    setTextInput(input);
+            <div className="stats-container">
+              {mode === MODES.DEFAULT && (
+                <div className="stats">
+                  <p className="stat-line">
+                    streak: {classicStats.streakCounter}
+                  </p>
+                  <p className="stat-line">
+                    best streak: {classicStats.bestStreakCounter}
+                  </p>
+                  <p className="stat-line">
+                    correct: {classicStats.correctCounter}
+                  </p>
+                  <p className="stat-line">
+                    false: {classicStats.falseCounter}
+                  </p>
+                  <p className="stat-line">
+                    last false word:
+                    <br />
+                    {classicStats.lastFalseWord}
+                  </p>
+                </div>
+              )}
 
-                    const lowerCaseInput = input.toLowerCase();
-
-                    if (lowerCaseInput === "astolfo") {
-                      setLogo(astolfo);
-                    } else if (lowerCaseInput === "persona") {
-                      setLogo(persona);
-                    }
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Control") {
-                      wordToSpeech(randomWord);
-                    }
-                  }}
-                />
-              </form>
-              <button
-                type="button"
-                className="repeat-button"
-                onClick={() => {
-                  wordToSpeech(randomWord);
-                  inputRef.current?.focus();
-                }}
-              >
-                <img src={soundSpeaker} alt="" />
-              </button>
+              {mode === MODES.XP && (
+                <div className="stats-xp">
+                  <div className="xp-panel-compact">
+                    <p className="level">
+                      Level: <b>{level}</b>
+                    </p>
+                    <div className="xp-bar">
+                      <div
+                        className={
+                          "xp-bar-fill " +
+                          (lastResult === "correct"
+                            ? "last-correct"
+                            : lastResult === "false"
+                              ? "last-false"
+                              : "")
+                        }
+                        style={{ width: progressPercent + "%" }}
+                      ></div>
+                    </div>
+                    <p>
+                      Total XP: <b>{xpStats.xp.toFixed(1)}</b>
+                    </p>
+                    <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
+                  </div>
+                  <p className="stat-line">streak: {xpStats.streakCounter}</p>
+                  <p className="stat-line">
+                    best streak: {xpStats.bestStreakCounter}
+                  </p>
+                  <p className="stat-line">correct: {xpStats.correctCounter}</p>
+                  <p className="stat-line">false: {xpStats.falseCounter}</p>
+                  <p className="stat-line">
+                    last false word:
+                    <br />
+                    {xpStats.lastFalseWord}
+                  </p>
+                  <select
+                    className="select"
+                    id="difficulty"
+                    value={dictionaryId}
+                    onChange={async (event) => {
+                      const newDictionaryId = event.target
+                        .value as DictionaryId;
+                      await handleDictionaryChange(newDictionaryId);
+                      setLastResult("false");
+                      advanceToNextWord();
+                      updateXpStats({
+                        xp: Math.max(
+                          0,
+                          xpStats.xp - 2 * XP_MODIFIERS[newDictionaryId],
+                        ),
+                      });
+                    }}
+                  >
+                    <option value={DICTIONARY_IDS.ENGLISH_5K}>
+                      Beginner (10 XP)
+                    </option>
+                    <option value={DICTIONARY_IDS.ENGLISH_10K}>
+                      Medium (12.5 XP)
+                    </option>
+                    <option value={DICTIONARY_IDS.ENGLISH_25K}>
+                      Advanced (20 XP)
+                    </option>
+                    <option value={DICTIONARY_IDS.SHAKESPEAREAN}>
+                      Old English (12.5 XP)
+                    </option>
+                  </select>
+                </div>
+              )}
             </div>
+            <select
+              className="select"
+              id="select-mode"
+              value={mode}
+              onChange={(event) => setMode(event.target.value as Mode)}
+            >
+              <option value={MODES.DEFAULT}>Classic Mode</option>
+              <option value={MODES.XP}>XP Mode</option>
+            </select>
+            <p className="feedback">{feedback}</p>
           </div>
-          <div className="top-content-right">
+          <div className="xp-column">
             {mode === MODES.XP && (
-              <div className="xp-box">
+              <div className="xp-panel">
                 <img className="beehive" src={currentBeehive}></img>
                 <p className="level">
                   Level: <b>{level}</b>
@@ -498,10 +593,10 @@ function App() {
                   Total XP: <b>{xpStats.xp.toFixed(1)}</b>
                 </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
-                <div className="bar">
+                <div className="xp-bar">
                   <div
                     className={
-                      "main-bar " +
+                      "xp-bar-fill " +
                       (lastResult === "correct"
                         ? "last-correct"
                         : lastResult === "false"
@@ -515,107 +610,6 @@ function App() {
             )}
           </div>
         </div>
-        <div className="stats-container">
-          {mode === MODES.DEFAULT && (
-            <div className="stats">
-              <p className="streakCounter">
-                streak: {classicStats.streakCounter}
-              </p>
-              <p className="streakCounter">
-                best streak: {classicStats.bestStreakCounter}
-              </p>
-              <p className="streakCounter">
-                correct: {classicStats.correctCounter}
-              </p>
-              <p className="streakCounter">
-                false: {classicStats.falseCounter}
-              </p>
-              <p>
-                last false word:
-                <br />
-                {classicStats.lastFalseWord}
-              </p>
-            </div>
-          )}
-
-          {mode === MODES.XP && (
-            <div className="stats-xp">
-              <div className="bottom-xp-box">
-                <p className="level">
-                  Level: <b>{level}</b>
-                </p>
-                <div className="bar">
-                  <div
-                    className={
-                      "main-bar " +
-                      (lastResult === "correct"
-                        ? "last-correct"
-                        : lastResult === "false"
-                          ? "last-false"
-                          : "")
-                    }
-                    style={{ width: progressPercent + "%" }}
-                  ></div>
-                </div>
-                <p>
-                  Total XP: <b>{xpStats.xp.toFixed(1)}</b>
-                </p>
-                <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
-              </div>
-              <p className="streakCounter">streak: {xpStats.streakCounter}</p>
-              <p className="streakCounter">
-                best streak: {xpStats.bestStreakCounter}
-              </p>
-              <p className="streakCounter">correct: {xpStats.correctCounter}</p>
-              <p className="streakCounter">false: {xpStats.falseCounter}</p>
-              <p>
-                last false word:
-                <br />
-                {xpStats.lastFalseWord}
-              </p>
-              <select
-                className="select"
-                id="difficulty"
-                value={dictionaryId}
-                onChange={async (event) => {
-                  const newDictionaryId = event.target.value as DictionaryId;
-                  await handleDictionaryChange(newDictionaryId);
-                  setLastResult("false");
-                  advanceToNextWord();
-                  updateXpStats({
-                    xp: Math.max(
-                      0,
-                      xpStats.xp - 2 * XP_MODIFIERS[newDictionaryId],
-                    ),
-                  });
-                }}
-              >
-                <option value={DICTIONARY_IDS.ENGLISH_5K}>
-                  Beginner (10 XP)
-                </option>
-                <option value={DICTIONARY_IDS.ENGLISH_10K}>
-                  Medium (12.5 XP)
-                </option>
-                <option value={DICTIONARY_IDS.ENGLISH_25K}>
-                  Advanced (20 XP)
-                </option>
-                <option value={DICTIONARY_IDS.SHAKESPEAREAN}>
-                  Old English (12.5 XP)
-                </option>
-              </select>
-            </div>
-          )}
-        </div>
-        <select
-          className="select"
-          id="select-mode"
-          value={mode}
-          onChange={(event) => setMode(event.target.value as Mode)}
-        >
-          <option value={MODES.DEFAULT}>Classic Mode</option>
-          <option value={MODES.XP}>XP Mode</option>
-        </select>
-        <p className="feedback">{feedback}</p>
       </div>
       {openSettings && (
         <div
@@ -623,7 +617,7 @@ function App() {
           onClick={() => setOpenSettings(false)}
         >
           <div className="overlay" onClick={(event) => event.stopPropagation()}>
-            <div className="container settings-header">
+            <div className="settings-header">
               <h2>Settings</h2>
               <button
                 type="button"
@@ -633,8 +627,8 @@ function App() {
                 ×
               </button>
             </div>
-            <div className="flex column settings-container">
-              <div className="settings-option slider-option">
+            <div className="settings-container">
+              <div className="settings-option">
                 <label htmlFor="volume">Volume: </label>
                 <input
                   type="range"
@@ -648,13 +642,14 @@ function App() {
                   }
                 />
                 <button
-                  className="button"
+                  type="button"
+                  className="reset-button"
                   onClick={() => setVolume(DEFAULT_SETTINGS.volume)}
                 >
                   reset to default
                 </button>
               </div>
-              <div className="settings-option slider-option">
+              <div className="settings-option">
                 <label htmlFor="pitch">Pitch: </label>
                 <input
                   type="range"
@@ -668,13 +663,14 @@ function App() {
                   }
                 />
                 <button
-                  className="button"
+                  type="button"
+                  className="reset-button"
                   onClick={() => setPitch(DEFAULT_SETTINGS.pitch)}
                 >
                   reset to default
                 </button>
               </div>
-              <div className="settings-option slider-option">
+              <div className="settings-option">
                 <label htmlFor="rate">Rate: </label>
                 <input
                   type="range"
@@ -688,7 +684,8 @@ function App() {
                   }
                 />
                 <button
-                  className="button"
+                  type="button"
+                  className="reset-button"
                   onClick={() => setRate(DEFAULT_SETTINGS.rate)}
                 >
                   reset to default
