@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useRef, useEffect } from "react";
 
 // logos
@@ -23,8 +24,13 @@ import soundSpeaker from "./assets/sound-speaker.svg";
 
 import english5k from "./static/english_5k.json";
 
-import type { Dictionary } from "./dictionary.types";
+import type { Dictionary } from "./types/dictionary.types";
+
+import type { ClassicStats, XpStats } from "./types/stats.types";
+import { DEFAULT_CLASSIC_STATS, DEFAULT_XP_STATS } from "./types/stats.types";
 import * as speech from "./utils/speech.ts";
+import { migrateOldStats } from "./utils/stat.migration";
+import { useLocalStorage } from "./utils/local.storage.ts";
 
 import "./App.css";
 
@@ -101,42 +107,6 @@ type DictionaryId = (typeof DICTIONARY_IDS)[keyof typeof DICTIONARY_IDS];
 type Mode = (typeof MODES)[keyof typeof MODES];
 
 /**
- * Store react state in localStorage so they persist across page reloads.
- * @param key - the localStorage key.
- * @param initialValue - the default value used if no stored value exists.
- * @returns state variable corresponding to the specified key with its setter function.
- */
-function useLocalStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(() => {
-    try {
-      const storedValue = localStorage.getItem(key);
-      return storedValue !== null ? JSON.parse(storedValue) : initialValue;
-    } catch {
-      return initialValue;
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
-
-  return [value, setValue] as const;
-}
-
-/**
- * Select first available voice from preferred voices and falls back to first available voice if none is found.
- * @param voices - available voices from browsers SpeechSynthesis API.
- * @returns the first matching voice from preferred voices or the the first available voice.
- */
-function initializeVoice(voices: SpeechSynthesisVoice[]) {
-  return (
-    speech.PREFERRED_VOICES.map((name) =>
-      voices.find((voice) => voice.name === name),
-    ).find((voice) => voice !== undefined) ?? voices[0]
-  );
-}
-
-/**
  * Return random feedback different from last used one.
  * @param messages
  * @param previous
@@ -157,11 +127,11 @@ function calculateXp(dictionaryId: DictionaryId) {
 }
 
 /**
- * Select random entry from given dictionary
+ * Select random entry from given dictionary containing a word and its definition.
  * @param dictionary
  * @returns
  */
-function getRandomWord(dictionary: Dictionary) {
+function getRandomWordAndDefinition(dictionary: Dictionary) {
   const randomIndex = Math.floor(Math.random() * dictionary.words.length);
   return dictionary.words[randomIndex];
 }
@@ -171,6 +141,20 @@ function getRandomWord(dictionary: Dictionary) {
 // function updateGameState(result: boolean)
 
 // function submitAnswer()
+
+/**
+ * Returns whether the guess matches the answer. (case-insensitive)
+ * @param guess - the player's input
+ * @param answer - the random word
+ * @returns true if guess equals answer (case-insensitive)
+ */
+function evaluateInput(guess: string, answer: string) {
+  if (guess.toLowerCase() === answer.toLowerCase()) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function App() {
   // speech
@@ -185,34 +169,16 @@ function App() {
   const [feedback, setFeedback] = useState("");
 
   // classic mode
-  const [streakCounter, setStreakCounter] = useLocalStorage("streakCounter", 0);
-  const [bestStreakCounter, setBestStreakCounter] = useLocalStorage(
-    "bestStreakCounter",
-    0,
-  );
-  const [correctCounter, setCorrectCounter] = useLocalStorage(
-    "correctCounter",
-    0,
-  );
-  const [falseCounter, setFalseCounter] = useLocalStorage("falseCounter", 0);
-  const [lastFalseWord, setLastFalseWord] = useLocalStorage(
-    "lastFalseWord",
-    "-",
+  const [classicStats, setClassicStats] = useLocalStorage(
+    "classicStats",
+    DEFAULT_CLASSIC_STATS,
   );
 
   // xp mode
-  const [xp, setXp] = useLocalStorage("xp", 0);
-  const [lastFalseWordInXp, setLastFalseWordInXp] = useLocalStorage(
-    "lastFalseWordInXp",
-    "-",
-  );
-  const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
-  const [xpStreakCounter, setXpStreakCounter] = useLocalStorage(
-    "xpStreakStreakCounter",
-    0,
-  );
+  const [xpStats, setXpStats] = useLocalStorage("xpStats", DEFAULT_XP_STATS);
 
   // UI
+  const [lastResult, setLastResult] = useState<"correct" | "false" | "">("");
   const [logo, setLogo] = useState(penguin);
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -225,16 +191,29 @@ function App() {
   );
 
   // settings
+  const [preferredVoiceName, setPreferredVoiceName] = useLocalStorage<
+    string | null
+  >("preferredVoiceName", null);
   const [volume, setVolume] = useState(DEFAULT_SETTINGS.volume);
   const [pitch, setPitch] = useState(DEFAULT_SETTINGS.pitch);
   const [rate, setRate] = useState(DEFAULT_SETTINGS.rate);
+
+  /* Migrate old stats from localStorage */
+  useEffect(() => {
+    const { mergedClassicStats, mergedXpStats } = migrateOldStats(
+      classicStats,
+      xpStats,
+    );
+    setClassicStats(mergedClassicStats);
+    setXpStats(mergedXpStats);
+  }, []);
 
   /* Initialize the voice with the preferred option once SpeechSynthesis API has loaded its available voices */
   useEffect(() => {
     const updateVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
       setVoices(availableVoices);
-      setVoice(initializeVoice(availableVoices));
+      setVoice(speech.initializeVoice(availableVoices, preferredVoiceName));
     };
 
     updateVoices();
@@ -244,7 +223,7 @@ function App() {
     return () => {
       speechSynthesis.removeEventListener("voiceschanged", updateVoices);
     };
-  }, []);
+  }, [preferredVoiceName]);
 
   // derived variables
   const matching = randomWord.toLowerCase().startsWith(textInput.toLowerCase()); // typed input matching so far
@@ -252,22 +231,22 @@ function App() {
   const wordClass = isCorrect ? "input-correct" : "input-not-correct";
   const modeClass = mode === MODES.XP ? "xp-mode" : "classic-mode";
 
-  const level = Math.floor((Math.sqrt(9025 + 40 * xp) - 95) / 10) + 1; // 50 -> 105 -> 165 -> 230 -> 300...
+  const level = Math.floor((Math.sqrt(9025 + 40 * xpStats.xp) - 95) / 10) + 1; // 50 -> 105 -> 165 -> 230 -> 300...
   const currentLevelXp = ((level - 1) * (5 * (level - 1) + 95)) / 2;
   const nextLevelXp = (level * (5 * level + 95)) / 2;
-  const xpToNextLevel = nextLevelXp - xp;
+  const xpToNextLevel = nextLevelXp - xpStats.xp;
   const progressPercent =
-    ((xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
+    ((xpStats.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100;
 
   const beehiveLevel = Math.min(Math.floor(level / 10) * 10, 110);
   const currentBeehive = BEEHIVE[beehiveLevel as keyof typeof BEEHIVE];
 
-  /**
-   * Reduce xp by amount. Set to zero if result would be negative.
-   * @param amount
-   */
-  function reduceXp(amount: number) {
-    setXp((currentXp) => Math.max(0, currentXp - amount));
+  function updateClassicStats(patch: Partial<ClassicStats>) {
+    setClassicStats((current) => ({ ...current, ...patch }));
+  }
+
+  function updateXpStats(patch: Partial<XpStats>) {
+    setXpStats((current) => ({ ...current, ...patch }));
   }
 
   /**
@@ -292,54 +271,10 @@ function App() {
   }
 
   /**
-   * Extract random entry from currently selected dictionary and update word and definition with its values.
-   * Additionally, change false, correct and streakCounter depending on whether textInput matches the current randomWord.
+   * Extract a random word from the current dictionary, update word and definition state, clear the text input, focus it and speak the word aloud.
    */
-  function generateRandomWord(xpPenalty = true) {
-    if (wordClass === "input-correct") {
-      if (mode === MODES.DEFAULT) {
-        const newStreak = streakCounter + 1;
-
-        setStreakCounter(newStreak);
-        setCorrectCounter((current) => current + 1);
-
-        if (newStreak > bestStreakCounter) {
-          setBestStreakCounter(newStreak);
-        }
-      } else if (mode === MODES.XP) {
-        const wordXp = calculateXp(dictionaryId);
-        setXp((current) => current + wordXp);
-        setFeedback((previous) =>
-          getDifferentFeedback(CORRECT_FEEDBACK, previous),
-        );
-        setLastResult("correct");
-        const newStreak = xpStreakCounter + 1;
-        setXpStreakCounter(newStreak);
-      }
-    } else {
-      if (mode === MODES.DEFAULT) {
-        setStreakCounter(0);
-        if (textInput.length > 0) {
-          setFalseCounter((current) => current + 1);
-          setLastFalseWord(randomWord);
-        }
-      } else if (mode === MODES.XP) {
-        if (xpPenalty) {
-          setXpStreakCounter(0);
-          let wordXp = calculateXp(dictionaryId);
-          wordXp = wordXp * 0.3;
-          reduceXp(wordXp);
-          setFeedback("");
-
-          if (textInput.length > 0) {
-            setLastFalseWordInXp(randomWord);
-          }
-        }
-        setLastResult("false");
-      }
-    }
-
-    const newRandomWord = getRandomWord(dictionary);
+  function advanceToNextWord() {
+    const newRandomWord = getRandomWordAndDefinition(dictionary);
     setRandomWord(newRandomWord.word);
     setDefinition(newRandomWord.definition);
 
@@ -347,6 +282,92 @@ function App() {
     setTextInput("");
 
     wordToSpeech(newRandomWord.word);
+  }
+
+  /**
+   * Extract random entry from currently selected dictionary and update word and definition with its values.
+   * Additionally, change false, correct and streakCounter depending on whether textInput matches the current randomWord.
+   */
+  function submitAnswer(
+    guess: string,
+    answer: string,
+    mode: Mode,
+    xpPenalty = true,
+  ) {
+    //const updatedStates = evaluateRound();
+
+    const guessIsCorrect = evaluateInput(guess, answer);
+    if (guessIsCorrect) {
+      if (mode === MODES.DEFAULT) {
+        const newStreak = classicStats.streakCounter + 1;
+        const newBestStreak = Math.max(
+          newStreak,
+          classicStats.bestStreakCounter,
+        );
+
+        updateClassicStats({
+          streakCounter: newStreak,
+          correctCounter: classicStats.correctCounter + 1,
+          bestStreakCounter: newBestStreak,
+        });
+      } else if (mode === MODES.XP) {
+        const wordXp = calculateXp(dictionaryId);
+
+        setFeedback((previous) =>
+          getDifferentFeedback(CORRECT_FEEDBACK, previous),
+        );
+        setLastResult("correct");
+        const newStreak = xpStats.streakCounter + 1;
+
+        updateXpStats({
+          streakCounter: newStreak,
+          bestStreakCounter: Math.max(newStreak, xpStats.bestStreakCounter),
+          correctCounter: xpStats.correctCounter + 1,
+          xp: xpStats.xp + wordXp,
+        });
+      }
+    } else {
+      if (mode === MODES.DEFAULT) {
+        let newFalseCounter = classicStats.falseCounter;
+        let newLastFalseWord = classicStats.lastFalseWord;
+
+        if (guess.length > 0) {
+          newFalseCounter = classicStats.falseCounter + 1;
+          newLastFalseWord = answer;
+        }
+
+        updateClassicStats({
+          streakCounter: 0,
+          falseCounter: newFalseCounter,
+          lastFalseWord: newLastFalseWord,
+        });
+      } else if (mode === MODES.XP) {
+        setFeedback("");
+        setLastResult("false");
+
+        let newFalseCounter = xpStats.falseCounter;
+        let newLastFalseWord = xpStats.lastFalseWord;
+        let newXp = xpStats.xp;
+
+        if (xpPenalty) {
+          newXp = Math.max(0, xpStats.xp - calculateXp(dictionaryId) * 0.3);
+        }
+
+        if (guess.length > 0) {
+          newFalseCounter = xpStats.falseCounter + 1;
+          newLastFalseWord = answer;
+        }
+
+        updateXpStats({
+          streakCounter: 0,
+          falseCounter: newFalseCounter,
+          lastFalseWord: newLastFalseWord,
+          xp: newXp,
+        });
+      }
+    }
+
+    advanceToNextWord();
   }
 
   /**
@@ -412,14 +433,14 @@ function App() {
               <button
                 type="button"
                 className="generator"
-                onClick={() => generateRandomWord()}
+                onClick={() => submitAnswer(textInput, randomWord, mode)}
               >
                 Generate random word
               </button>
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
-                  generateRandomWord();
+                  submitAnswer(textInput, randomWord, mode);
                 }}
               >
                 <input
@@ -474,7 +495,7 @@ function App() {
                   Level: <b>{level}</b>
                 </p>
                 <p>
-                  Total XP: <b>{xp.toFixed(1)}</b>
+                  Total XP: <b>{xpStats.xp.toFixed(1)}</b>
                 </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
                 <div className="bar">
@@ -497,14 +518,22 @@ function App() {
         <div className="stats-container">
           {mode === MODES.DEFAULT && (
             <div className="stats">
-              <p className="streakCounter">streak: {streakCounter}</p>
-              <p className="streakCounter">best streak: {bestStreakCounter}</p>
-              <p className="streakCounter">correct: {correctCounter}</p>
-              <p className="streakCounter">false: {falseCounter}</p>
+              <p className="streakCounter">
+                streak: {classicStats.streakCounter}
+              </p>
+              <p className="streakCounter">
+                best streak: {classicStats.bestStreakCounter}
+              </p>
+              <p className="streakCounter">
+                correct: {classicStats.correctCounter}
+              </p>
+              <p className="streakCounter">
+                false: {classicStats.falseCounter}
+              </p>
               <p>
                 last false word:
                 <br />
-                {lastFalseWord}
+                {classicStats.lastFalseWord}
               </p>
             </div>
           )}
@@ -529,15 +558,20 @@ function App() {
                   ></div>
                 </div>
                 <p>
-                  Total XP: <b>{xp.toFixed(1)}</b>
+                  Total XP: <b>{xpStats.xp.toFixed(1)}</b>
                 </p>
                 <p>XP to next level: {xpToNextLevel.toFixed(1)}</p>
               </div>
-              <p>streak: {xpStreakCounter}</p>
+              <p className="streakCounter">streak: {xpStats.streakCounter}</p>
+              <p className="streakCounter">
+                best streak: {xpStats.bestStreakCounter}
+              </p>
+              <p className="streakCounter">correct: {xpStats.correctCounter}</p>
+              <p className="streakCounter">false: {xpStats.falseCounter}</p>
               <p>
                 last false word:
                 <br />
-                {lastFalseWordInXp}
+                {xpStats.lastFalseWord}
               </p>
               <select
                 className="select"
@@ -546,8 +580,14 @@ function App() {
                 onChange={async (event) => {
                   const newDictionaryId = event.target.value as DictionaryId;
                   await handleDictionaryChange(newDictionaryId);
-                  generateRandomWord(false);
-                  reduceXp(2 * XP_MODIFIERS[newDictionaryId]);
+                  setLastResult("false");
+                  advanceToNextWord();
+                  updateXpStats({
+                    xp: Math.max(
+                      0,
+                      xpStats.xp - 2 * XP_MODIFIERS[newDictionaryId],
+                    ),
+                  });
                 }}
               >
                 <option value={DICTIONARY_IDS.ENGLISH_5K}>
@@ -664,6 +704,7 @@ function App() {
 
                     if (selectedVoice) {
                       setVoice(selectedVoice);
+                      setPreferredVoiceName(selectedVoice.name);
                     }
                   }}
                 >
